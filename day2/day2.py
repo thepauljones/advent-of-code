@@ -1,5 +1,5 @@
 with open('data.dat') as file:
-    data = [ line.strip() for line in file ]
+    data = [line.strip() for line in file]
 
 def part_one(data):
     depth = 0
