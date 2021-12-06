@@ -1,6 +1,6 @@
 from array import array
 
-with open('test-data.dat') as file:
+with open('data.dat') as file:
     data = [line.strip() for line in file]
 
 # Get all the data in some kind of structure
@@ -53,17 +53,6 @@ def sum_uncrossed(card):
 
     return count
 
-
-def part_one():
-    for seq_i in range(0, len(sequence)):
-        for card_index in range(0, len(cards)):
-            mark_number(sequence[seq_i], cards[card_index], results[card_index])
-
-            is_solved = is_bingo(results[card_index])
-
-            if (is_solved):
-                return int(sequence[seq_i]) * sum_uncrossed(results[card_index])
-
 def part_two():
     solved = []
     for seq_i in range(0, len(sequence)):
@@ -80,5 +69,4 @@ def part_two():
                     return sum_uncrossed(results[card_index]) * int(sequence[seq_i])
 
 
-# print(part_one())
 print(part_two())
