@@ -1,8 +1,10 @@
 from array import array
 
-with open('data.dat') as file:
+with open('test-data.dat') as file:
     data = [line.strip() for line in file]
 
+# Get all the data in some kind of structure
+# keep a separate list for result status
 sequence = data[0].split(',')
 cards = []
 results = []
@@ -21,25 +23,46 @@ for i in range(1, len(data)):
         current_result.append(data[i].split())
 
 
+# Don't forget the last one :)
 cards.append(current_card)
 results.append(current_result)
 
-for seq_i in range(0, len(sequence)):
-    for card_index in range(0, len(cards)):
-        bingo_card = cards[card_index]
-        for i in range(0, len(bingo_card)):
-            for j in range(0, len(bingo_card[i])):
-                if (bingo_card[i][j] == sequence[seq_i]):
-                    results[card_index][i][j] = 'X'
-                    if (''.join(results[card_index][i]) == 'XXXXX'):
-                        print('BINGO!', card_index, i, sequence[seq_i])
-                        count = 0
-                        for k in range(0, len(results[card_index])):
-                            for l in range(0, len(results[card_index][k])):
-                                if (results[card_index][k][l] != 'X'):
-                                    count += int(results[card_index][k][l])
 
-                        print(count * int(sequence[seq_i]))
-                        exit()
+def mark_number(number, card, result):
+    for i in range(0, len(card)):
+        for j in range(0, len(card[i])):
+            if (card[i][j] == number):
+                result[i][j] = 'X'
+
+def is_bingo(card):
+    for i in range(0, len(list(card[0]))):
+        col = []
+        for line in card:
+            col.append(line[i])
+            if (''.join(line) == 'XXXXX' or ''.join(col) == 'XXXXX'):
+                return True
+            
+    return False
+
+def sum_uncrossed(card):
+    count = 0
+    for line in card:
+        for i in list(line):
+            if (i != 'X'):
+                count += int(i)
+
+    print(count)
+    return count
 
 
+def part_one(data):
+    for seq_i in range(0, len(sequence)):
+        for card_index in range(0, len(cards)):
+            mark_number(sequence[seq_i], cards[card_index], results[card_index])
+
+            is_solved = is_bingo(results[card_index])
+
+            if (is_solved):
+                return int(sequence[seq_i]) * sum_uncrossed(results[card_index])
+
+print(part_one(data))
