@@ -48,26 +48,55 @@ def init_board(size):
 
     return board
 
-def add_line_to_board(line, board):
+def length_of_line(x1, y1, x2, y2):
+    return abs(x1 - x2) + abs(y1 - y2)
+
+def add_line_to_board(line, board, is_part_one):
     start = line[0]
     end = line[1]
         
-    # only horizontal and vertical lines allowed
-    if not (start.x == end.x or start.y == end.y):
-        print('REJECTED', start.x, start.y, end.x, end.y)
-        return
+    if(is_part_one):
+        # only horizontal and vertical lines allowed
+        if not (start.x == end.x or start.y == end.y):
+            print('REJECTED', start.x, start.y, end.x, end.y)
+            return
 
-    print('From ', start.x, start.y, ' to ', end.x, end.y)
+
+
     if (start.x == end.x):
         s = min(start.y, end.y)
         e = max(start.y, end.y)
         for y in range(s, e + 1):
             board[int(y)][int(start.x)] += 1
-    else:
+    elif (start.y == end.y):
         s = min(start.x, end.x)
         e = max(start.x, end.x)
         for x in range(s, e + 1):
             board[int(start.y)][x] += 1
+    # diagonal line
+    else:
+        # diagonal line, length is always whichever axis
+        length = abs(start.x - end.x)
+        if start.x < end.x:
+            start_point = start
+            end_point = end
+        else:
+            start_point = end
+            end_point = start
+
+        count = 0
+        if start_point.y > end_point.y:
+            while(count <= length):
+                board[start_point.y - count][start_point.x + count] += 1
+                count += 1
+        else:
+            while(count <= length):
+                board[start_point.y + count][start_point.x + count] += 1
+                count += 1
+
+
+            
+
 
 def print_board(board):
     for line in board:
@@ -96,15 +125,20 @@ def count_instances(board):
     return count
 
 
-def part_one():
+
+def solve(is_part_one):
     max_size = get_max_size(data)
     board = init_board(max_size)
     lines = get_lines(data)
 
     for line in lines:
-        add_line_to_board(line, board)
+        add_line_to_board(line, board, is_part_one)
+        
+
+    print_board(board)
 
     return count_instances(board)
 
-print(part_one())
+print(solve(True))
+print(solve(False))
 
