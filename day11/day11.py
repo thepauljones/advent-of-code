@@ -44,7 +44,7 @@ def print_grid(grid):
         print(''.join(map(str, row)))
     print('----------')
 
-def bang_grid(grid):
+def bang_grid(grid, step):
     for j in range(0, len(grid)):
         for i in range(0, len(grid[0])):
             grid[j][i] += 1
@@ -58,17 +58,22 @@ def bang_grid(grid):
         tens = set(get_10s(data)).difference(flash)
         flash = set(flash).union(set(tens))
 
+    if len(flash) > 99:
+        print('Epic Flash!', step + 1)
+        exit()
     for point in flash:
         grid[point[0]][point[1]] = 0
 
     return len(flash)
 
-
 def part_one(grid):
     count_flashes = 0
-    for i in range(0, 100):
-        count_flashes += bang_grid(grid)
-        
+    step = 0
+    while True:
+        count_flashes += bang_grid(grid, step)
+
+        step += 1
+
         print_grid(data)
 
     print(count_flashes)
