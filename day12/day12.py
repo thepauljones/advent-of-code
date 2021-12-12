@@ -1,4 +1,4 @@
-with open('test-data.dat') as file:
+with open('data.dat') as file:
     raw_data = [line.strip() for line in file]
 
 # Alright, let's see if I can handle Graphs
@@ -27,30 +27,68 @@ for line in raw_data:
 # case nodes
 def get_path_from(graph, start, end, path=[]):
     path = path + [start]
+
     if start == end:
         return [path]
+
     if not graph.has_key(start):
         return []
+
     paths = []
+
     for node in graph[start]:
         if node not in path or not node.islower():
-                newpaths = get_path_from(graph, node, end, path)
-                for newpath in newpaths:
-                    paths.append(newpath)
+            newpaths = get_path_from(graph, node, end, path)
+            for newpath in newpaths:
+                paths.append(newpath)
+
     return paths
 
-def get_all_paths(graph):
+def may_join_path(node, path):
+    if node.islower() and not node == 'start' and not node == 'end':
+        already_contains_two_of_a_lowercase_node = False
+        for internal_node in path:
+            if path.count(internal_node) > 1 and internal_node.islower():
+                already_contains_two_of_a_lowercase_node = True
+
+        if not already_contains_two_of_a_lowercase_node:
+            return True
+
+    return node not in path or not node.islower()
+
+# print(may_join_path('b', ['start', 'b', 'A', 'd', 'c', 'e', 'D', 'D']))
+
+# Like the above graph path finder
+# but uses the custom checker function may_join_path
+# which allows lowercase caves twice a SINGLE time
+def get_path_from_with_twist(graph, start, end, path=[]):
+    path = path + [start]
+
+    if start == end:
+        return [path]
+
+    if not graph.has_key(start):
+        return []
+
     paths = []
 
-    paths.append(get_path_from(graph, 'start', 'end', []))
+    for node in graph[start]:
+        if may_join_path(node, path):
+            newpaths = get_path_from_with_twist(graph, node, end, path)
+            for newpath in newpaths:
+                paths.append(newpath)
 
     return paths
 
 def part_one(graph):
-    result = get_all_paths(graph)
-    for line in result:
-        print(line)
+    paths = []
+    paths.append(get_path_from(graph, 'start', 'end', []))
+    print(len(paths[0]))
 
-    print(len(result[0]))
+def part_two(graph):
+    paths = []
+    paths.append(get_path_from_with_twist(graph, 'start', 'end', []))
+    print(len(paths[0]))
 
 part_one(G)
+part_two(G)
