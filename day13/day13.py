@@ -65,8 +65,12 @@ def fold_across(grid, fold_pos):
         result.append([])
         count_i = 1
         for i in range(fold_pos, fold_pos * 2):
+            # The fold is NOT always in the middle of the grid
+            # so discard flaps outside the intersection
             if (i + 1 >= len(grid[0])):
                 break
+
+            # this thing spreads from the fold out, one space on both sides at a time
             result[j].append('#' if grid[j][i + 1] == '#' or grid[j][fold_pos - count_i] == '#' else '.')
             count_i = count_i + 1
 
