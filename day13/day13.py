@@ -1,6 +1,6 @@
 import numpy as np
 
-with open('test-data.dat') as file:
+with open('data.dat') as file:
     raw_data = [line.strip() for line in file]
 
 dot_positions = []
@@ -33,11 +33,8 @@ for j in range(0, max_y + 1):
     grid.append([])
     
 for line in grid:
-    for i in range(0, max_x + 1):
+    for i in range(0, max_x + 2):
         line.append('.')
-
-print(len(grid))
-print(len(grid[0]))
 
 # Data setup
 def print_grid(grid):
@@ -66,10 +63,12 @@ def fold_across(grid, fold_pos):
 
     for j in range(0, len(grid)):
         result.append([])
-        for i in range(0, fold_pos):
-            result[j].append('#' if grid[j][i] == '#' or grid[j][fold_pos * 2 - i] == '#' else '.')
-
-    print_grid(result)
+        count_i = 1
+        for i in range(fold_pos, fold_pos * 2):
+            if (i + 1 >= len(grid[0])):
+                break
+            result[j].append('#' if grid[j][i + 1] == '#' or grid[j][fold_pos - count_i] == '#' else '.')
+            count_i = count_i + 1
 
     return result[:]
 
@@ -90,10 +89,10 @@ def fold(grid, fold):
 
 def part_one(grid):
     result = grid
-    print_grid(grid)
     for current_fold in folds:
         result = fold(result[:], current_fold)
-        break
+
+    print_grid(result)
 
     print(count_hashes(result))
 
