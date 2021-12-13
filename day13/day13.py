@@ -52,63 +52,26 @@ for pos in dot_positions:
 
 # Alright, scaffolding is done, lets go
 def fold_up(grid, fold_pos):
-    bottom_sheet = []
-    top_sheet = []
-
-    for j in range(0, len(grid)):
-        if(j == fold_pos):
-            continue
-
-        if (j < fold_pos):
-            bottom_sheet.append(grid[j])
-        else:
-            top_sheet.append(grid[j])
-
-    return merge_grids(bottom_sheet[:], np.flipud(top_sheet[:]), 'up')
-
-
-def fold_across(grid, fold_pos):
-    bottom_sheet = []
-    top_sheet = []
-
-    for j in range(0, len(grid)):
-        bottom_sheet.append(grid[j][:fold_pos])
-        top_sheet.append(grid[j][fold_pos + 1:])
-
-    print_grid(bottom_sheet)
-    print_grid(top_sheet)
-
-    return merge_grids(bottom_sheet[:], np.fliplr(top_sheet[:]), 'across')
-
-
-def merge_grids(source, target, fold_type):
-    # init array
     result = []
 
-    if (len(source) != len(target)):
-        print('Error: ',fold_type, 'merge_grids: source and target have different lengths')
-        print(len(source), len(target), len(grid))
-        exit()
-
-    if (len(source[0]) != len(target[0])):
-        print('Error: merge_grids: X source and target have different lengths')
-        print(len(source[0]), len(target[0]), len(grid[0]))
-        exit()
-
-    for j in range(0, len(source)):
+    for j in range(0, fold_pos):
         result.append([])
-        
-    for j in range(0, len(source)):
-        for i in range(0, len(source[0])):
-            if (source[j][i] == '#' or target[j][i] == '#'):
-                result[j].append('#')
-            else:
-                result[j].append('.')
+        for i in range(0, len(grid[0])):
+            result[j].append('#' if grid[j][i] == '#' or grid[len(grid) - j - 1][i] == '#' else '.')
+
+    return result[:]
+
+def fold_across(grid, fold_pos):
+    result = []
+
+    for j in range(0, len(grid)):
+        result.append([])
+        for i in range(0, fold_pos):
+            result[j].append('#' if grid[j][i] == '#' or grid[j][fold_pos * 2 - i] == '#' else '.')
 
     print_grid(result)
 
     return result[:]
-
 
 def count_hashes(grid):
     count = 0
@@ -130,6 +93,7 @@ def part_one(grid):
     print_grid(grid)
     for current_fold in folds:
         result = fold(result[:], current_fold)
+        break
 
     print(count_hashes(result))
 
