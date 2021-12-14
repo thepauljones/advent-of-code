@@ -1,71 +1,71 @@
-from collections import OrderedDict
-
 with open('data.dat') as file:
     raw_data = [line.strip() for line in file]
 
 starting_pattern = raw_data[0]
 
+# Create Polymer from starting polymer
+Polymer = {}
+for i in range(0, len(list(starting_pattern)) - 1):
+    pair = ''.join([starting_pattern[i], starting_pattern[i+1]])
+    if Polymer.get(pair):
+        Polymer[pair] += 1
+    else:
+        Polymer[pair] = 1
+
+# Parse rules of polymer proliferation
 Code = {}
 for i in range (2, len(raw_data)):
     pattern, insertion = raw_data[i].split(' -> ')
     Code[pattern] = insertion
 
-def perform_insertion_on_pair(pair, insertion):
-    chars = list(pair)
-    return ''.join([chars[0], insertion])
+def polymerize(Polymer):
+    Result = {}
+    for pair in Polymer:
+        pair_count = Polymer[pair]
 
+        first = pair[0] + Code[pair]
+        second = Code[pair] + pair[1]
 
-def apply_pattern(pattern):
-    updated_pattern = ''
-    for i in range(0, len(list(pattern)) - 1):
-        pair = ''.join([pattern[i], pattern[i + 1]])
-        updated_pattern += perform_insertion_on_pair(pair, Code[pair])
-
-    updated_pattern += list(pattern)[len(list(pattern)) - 1]
-
-    return updated_pattern
-
-def get_count(pattern, count_type = 'Most'):
-    chars = list(pattern)
-    Count = {}
-    for char in pattern:
-        if Count.get(char):
-            Count[char] += 1
+        if Result.get(first):
+            Result[first] += pair_count
         else:
-            Count[char] = 1
+            Result[first] = pair_count
 
-    ordered = OrderedDict(sorted(Count.items())).items()
+        if Result.get(second):
+            Result[second] += pair_count
+        else:
+            Result[second] = pair_count
 
-    most = (' ', 0)
-    fewest = (' ', 9999999)
+    return Result
 
-    for pair in Count.items():
-        letter = pair[0]
-        count = pair[1]
-        print(letter, count)
-        if count > most[1]:
-            most = (letter, count)
-        if count < fewest[1]:
-            fewest = (letter, count)
+def get_count_most_min_count_fewest(Result):
+    CountChars = {}
+    unique_chars = set(''.join(Result.keys()))
 
-    print(most)
-    print(count)
+    for char in unique_chars:
+        local_count = 0
+        for pair in Result:
+            if char == pair[1]:
+                local_count += Result[pair]
 
-    return most[1] if count_type == 'Most' else fewest[1]
+        CountChars[char] = local_count
 
+    sorted_chars = sorted(CountChars.items(), key=lambda x: x[1], reverse=True)
 
-def part_one():
-    result = starting_pattern
+    return sorted_chars[0][1] - sorted_chars[len(sorted_chars) - 1][1]
+
+def part_one(Polymer):
+    Result = Polymer
     count = 0
-    while count < 10:
-        result = apply_pattern(result)
-        print(count + 1, 'times', len(result))
-        count = count + 1
+    while count < 40:
+        Result = polymerize(Result)
+        count += 1
 
-    count_most = get_count(result)
-    count_fewest = get_count(result, 'Fewest')
+    total = 1
+    for pair in Result:
+        total += Result[pair]
 
-    print(count_most - count_fewest)
+    print(get_count_most_min_count_fewest(Result))
 
-part_one()
+part_one(Polymer)
 
