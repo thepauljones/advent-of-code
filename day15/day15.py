@@ -18,9 +18,12 @@ limitX = len(field[0])
 limitY = len(field)
 print('limit', limitX, limitY)
 
-for i in range(0, 4):
-    for x in range(0, limitX):
-        field[0].append(increment(field[0][limitX * i + x]))
+# Expand this bitch outwards x5 with incremental rule changes
+for j in range(0, limitY):
+    for i in range(0, 4):
+        for x in range(0, limitX):
+            field[j].append(increment(field[j][limitX * i + x]))
+
 
 
 
