@@ -1,6 +1,6 @@
 from adjacents import get_adjacent
 
-with open('test-data.dat') as file:
+with open('data.dat') as file:
     raw_data = [line.strip() for line in file]
 
 field = []
@@ -8,7 +8,7 @@ for line in raw_data:
     field.append(map(int, list(line)))
 
 
-# Part Two starts here, abandon all hope ye who enter
+# PART TWO starts here, abandon all hope ye who enter
 
 def increment(num):
     result = num + 1
@@ -16,7 +16,6 @@ def increment(num):
 
 limitX = len(field[0])
 limitY = len(field)
-print('limit', limitX, limitY)
 
 # Expand this bitch outwards x5 with incremental rule changes
 for j in range(0, limitY):
@@ -24,13 +23,11 @@ for j in range(0, limitY):
         for x in range(0, limitX):
             field[j].append(increment(field[j][limitX * i + x]))
 
+for y in range(0, 4):
+    for j in range(0, limitY):
+        field.append(map(increment, field[y * limitY + j]))
 
-
-
-print('PIST:', '11637517422274862853338597396444961841755517295286')
-print('LIST:', ''.join(map(str, field[0])))
-
-# Part Two mappery ends
+# PART TWO mappery ends
 
 def print_grid(field):
     for line in field:
@@ -46,7 +43,7 @@ for j in range(0, len(field)):
 
 #print(FieldGraph)
 
-print_grid(field)
+#print_grid(field)
 
 def find_path(start, end, field):
     frontier = []
