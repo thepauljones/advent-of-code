@@ -1,12 +1,33 @@
 from adjacents import get_adjacent
 
-with open('data.dat') as file:
+with open('test-data.dat') as file:
     raw_data = [line.strip() for line in file]
 
 field = []
 for line in raw_data:
     field.append(map(int, list(line)))
 
+
+# Part Two starts here, abandon all hope ye who enter
+
+def increment(num):
+    result = num + 1
+    return result if result < 10 else 1
+
+limitX = len(field[0])
+limitY = len(field)
+print('limit', limitX, limitY)
+
+for i in range(0, 4):
+    for x in range(0, limitX):
+        field[0].append(increment(field[0][limitX * i + x]))
+
+
+
+print('PIST:', '11637517422274862853338597396444961841755517295286')
+print('LIST:', ''.join(map(str, field[0])))
+
+# Part Two mappery ends
 
 def print_grid(field):
     for line in field:
@@ -22,6 +43,8 @@ for j in range(0, len(field)):
 
 #print(FieldGraph)
 
+print_grid(field)
+
 def find_path(start, end, field):
     frontier = []
 
@@ -32,7 +55,7 @@ def find_path(start, end, field):
     cost[start] = 0
 
     while len(frontier) > 0:
-        cost_so_far, current = frontier.pop(0)
+        _, current = frontier.pop(0)
 
         if current == end:
             break
@@ -61,7 +84,7 @@ def find_path(start, end, field):
     for j, i in path:
         field[j][i] = '0'
 
-    print_grid(field)
+    # print_grid(field)
     path.reverse()
     print(cost[end])
 
