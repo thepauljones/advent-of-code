@@ -1,30 +1,31 @@
-with open('test-data.dat') as file:
+with open('data.dat') as file:
     data = [line.strip() for line in file][0]
 
 ParsedData = {}
 
 total_version = 0
 
+# This is a fucking pain, leading zeroes.
+# In this case I prepend a '1' to the hex value
+# and just strip it from the result again
+# https://newbedev.com/converting-from-hex-to-binary-without-losing-leading-0-s-python
 def hex_to_binary_string(hex_value):
-    hex_scale = 16
-    return bin(int(hex_value, hex_scale))[2:].zfill(4)
+    hex_base = 16
+    result = ''.join(bin(int(c, hex_base))[2:].zfill(4) for c in hex_value)
+    return result
 
 def get_version(binary, playhead):
+    global total_version
     length = 3
-    binary_version = binary[:length]
-    return (int(binary_version, 2), playhead + length)
+    binary_version = binary[playhead:playhead+length]
+    version = int(binary_version, 2)
+    total_version += version
+    return (version, playhead + length)
 
 def get_packet_type_id(binary, playhead):
     length = 3
     binary_packet_type_id = binary[playhead:length + playhead]
-    print('INVALID:', binary[playhead:length + playhead], '<- INVALID', binary_packet_type_id, playhead)
-    print('total len', len(binary))
-    print('total version', total_version)
     return (int(binary_packet_type_id, 2), min(len(binary), playhead + length))
-
-def get_packet_value(binary, current_piece):
-    current_piece = binary[:5]
-    print(current_piece)
 
 # ID: 4 - Packet type
 def parse_literal_packet(binary_data, playhead):
@@ -32,17 +33,33 @@ def parse_literal_packet(binary_data, playhead):
     loops = 0
     group_size = 5
 
-    # if a group of 1s and 0s starts with a 1, it continues to the
-    # next group, a 0 means this is the last one
-    while binary_data[playhead + (group_size * loops)] == '1':
-        # Add in the last four of each group of five to the current group
-        groups.append(binary_data[loops * group_size + 1: loops * group_size + group_size])
-        loops += 1
+    if binary_data[playhead] == '1':
+        # if a group of 1s and 0s starts with a 1, it continues to the
+        # next group, a 0 means this is the last one
+        while binary_data[playhead + (group_size * loops)] == '1':
+            # Add in the last four of each group of five to the current group
+            groups.append(binary_data[playhead + (group_size * loops) + 1:playhead + (group_size * loops) + 5])
+            loops += 1
 
-    # Add last one
-    groups.append(binary_data[loops * group_size + 1:loops * group_size + group_size])
+        # Add last one
+        groups.append(binary_data[playhead + (group_size * loops) + 1:playhead + (group_size * loops) + 5])
+
+    else:
+        print('else, playhead', playhead, binary_data[playhead:playhead + 5])
+        groups.append(binary_data[playhead + 1:playhead + 5])
+
+    print(groups)
+
     # Return the decimal value of the found binary value
-    return (int(''.join(groups), 2), playhead + (loops * group_size))
+    bit_result = ''.join(groups)
+    result = int(bit_result, 2)
+    updated_playhead = playhead + len(bit_result) + 1
+    print('RESULT:', result, ' -> ', groups)
+
+    if (binary_data == '100100000100011000001100000'):
+        print('WHYYYYY', groups, result)
+
+    return (result, updated_playhead)
 
 def get_length_subpacket(binary_data, playhead):
     length = 15
@@ -53,37 +70,50 @@ def get_num_sub_packets(binary_data, playhead):
     return (int(binary_data[playhead: playhead + length], 2), playhead + length)
 
 def get_operator_packet_length_type_id(binary_data, playhead):
-    return (binary_data[playhead], playhead + 1)
+    return (int(binary_data[playhead]), playhead + 1)
 
 def parse_operator_packet(binary_data, playhead):
-    version, playhead = get_version(binary_data, playhead)
-    packet_type_id, playhead = get_packet_type_id(binary_data, playhead)
-
     length_type_id, playhead = get_operator_packet_length_type_id(binary_data, playhead)
-    
+
     if length_type_id == 0:
         length_subpacket, playhead = get_length_subpacket(binary_data, playhead)
-        playhead = parse_packet(binary_data, playhead)
+        subpacket_data = binary_data[playhead:playhead + length_subpacket]
+        sub_playhead = 0
+        while sub_playhead < len(subpacket_data):
+            sub_playhead = parse_packet(subpacket_data, sub_playhead)
 
     if length_type_id == 1:
         num_subpackets, playhead = get_num_sub_packets(binary_data, playhead)
-        for i in range(0, num_subpackets):
-            playhead = parse_packet(binary_data, playhead)
+        sub_playhead = 0
+        count = 0
+        while count < num_subpackets:
+            print('SUB PACKET', count, sub_playhead)
+            sub_playhead += parse_packet(binary_data[playhead + sub_playhead:], 0)
+            count += 1
+
+    playhead += sub_playhead
 
     return playhead
 
 def parse_packet(binary_data, playhead):
-    global total_version
+    if binary_data[playhead:].find('1') == -1:
+        print('invalid packet')
+        return len(binary_data)
+
+    if (len(binary_data[playhead:]) < 2):
+        print('invalid packet')
 
     version, playhead = get_version(binary_data, playhead)
     packet_type_id, playhead = get_packet_type_id(binary_data, playhead)
 
-    total_version = total_version + version
+    print('ID', packet_type_id, binary_data)
 
     if packet_type_id == 4:
         literal_packet_data, playhead = parse_literal_packet(binary_data, playhead)
+        print('Result', literal_packet_data)
+    else:
+        playhead = parse_operator_packet(binary_data, playhead)
 
-    print('Version: ', version, 'ID: ', packet_type_id, 'Playhead: ', playhead)
     return playhead
 
 def parse_message(hex_string):
@@ -96,6 +126,15 @@ def parse_message(hex_string):
     print('TOTAL', total_version)
 
 parse_message(data)
+# parse_packet('100100000100011000001100000', 0)
+# parse_packet('100100000100011000001100000', 0)
+
+# parse_packet('11010001010', 0) <- Works and returns 10
+# parse_packet('0101001000100100', 0) <- Works and returns 20
+# parse_packet('01010000001', 0) <- Works and returns 1
+
+# parse_packet('10010000010', 0) <- Works and returns 2
+# parse_packet('00110000011', 0) #<- Works and returns 3
 
 # binary_data = hex_to_binary_string(data)
 # message_binary = binary_data[6:]
@@ -110,4 +149,3 @@ parse_message(data)
 # print('Version: ', version)
 # print('Packet type id:', packet_type_id)
 # 
-# print('Literal value in message', parse_literal_packet(message_binary))
