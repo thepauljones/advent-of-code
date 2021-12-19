@@ -7,7 +7,8 @@ target_x1, target_x2 = map(int, raw_x.split('=')[1].split('..'))
 target_y1, target_y2 = map(int, raw_y.split('=')[1].split('..'))
 
 def probe_in_target(pos):
-    result = pos[0] >= target_x1 and pos[0] <= target_x2 and pos[1] >= target_y1 and pos[1] <= target_y2
+    result = pos[0] >= target_x1 and pos[0] <= target_x2 \
+    and pos[1] >= target_y1 and pos[1] <= target_y2
     return result
 
 def probe_beyond_target(pos):
@@ -39,7 +40,7 @@ def fire_probe(pos, vel):
 
 def part_one():
     pos = (0, 0)
-    for x in range(-300, 300):
+    for x in range(1, 300):
         for y in range(-300, 300):
             if fire_probe(pos, (x, y)):
                 Trajectories[(x, y)] = True
