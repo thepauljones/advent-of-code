@@ -1,4 +1,4 @@
-with open('data.dat') as file:
+with open('test-data.dat') as file:
     data = [line.strip() for line in file][0]
 
 ParsedData = {}
@@ -68,28 +68,37 @@ def get_operator_packet_length_type_id(binary_data, playhead):
 def parse_operator_packet(binary_data, playhead):
     length_type_id, playhead = get_operator_packet_length_type_id(binary_data, playhead)
 
-    sub_playhead = 0
     if length_type_id == 0:
         length_subpacket, playhead = get_length_subpacket(binary_data, playhead)
         subpacket_data = binary_data[playhead:playhead + length_subpacket]
+        sub_playhead = 0
         while sub_playhead < len(subpacket_data):
             sub_playhead = parse_packet(subpacket_data, sub_playhead)
 
     if length_type_id == 1:
         num_subpackets, playhead = get_num_sub_packets(binary_data, playhead)
         sub_playhead = 0
-        for _ in  range(num_subpackets):
+        count = 0
+        while count < num_subpackets:
             sub_playhead += parse_packet(binary_data[playhead + sub_playhead:], 0)
+            count += 1
 
     playhead += sub_playhead
 
     return playhead
 
 def parse_packet(binary_data, playhead):
+    if binary_data[playhead:].find('1') == -1:
+        return len(binary_data)
+
 
     version, playhead = get_version(binary_data, playhead)
     packet_type_id, playhead = get_packet_type_id(binary_data, playhead)
 
+    print('VERSION:', version)
+    print('PACKET:', packet_type_id)
+    print('playhead:',playhead)
+    print('binary', binary_data)
 
     if packet_type_id == 4:
         literal_packet_data, playhead = parse_literal_packet(binary_data, playhead)
@@ -102,7 +111,7 @@ def parse_message(hex_string):
     binary_data = hex_to_binary_string(hex_string)
 
     playhead = 0
-    while playhead < len(binary_data) and binary_data[playhead:].find('1') > -1:
+    while playhead < len(binary_data):
         playhead = parse_packet(binary_data, playhead)
 
     print('TOTAL', total_version)
