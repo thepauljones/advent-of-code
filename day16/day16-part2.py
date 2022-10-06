@@ -36,42 +36,27 @@ def agg(data, type):
         return sum(data)
 
     if type == 1:
-        print('1', data)
         result = 1
         for x in data:
-            result = result * x
-
+            result *= x
         return result
 
     if type == 2:
-        print('2')
         return min(data)
 
     if type == 3:
-        print('3')
         return max(data)
 
     if type == 5:
-        print(data, 5)
-        if data[0] < data[1]:
-            return 0
-        return 1
+        return int(data[0] > data[1])
 
     if type == 6:
-        print(data)
-        if data[0] < data[1]:
-            return 1
-        return 0
+        return int(data[0] < data[1])
 
     if type == 7:
-        if data[0] == data[1]:
-            return 1
-        return 0
+        return int(data[0] == data[1])
 
 def parse_packet(packet):
-    if len(packet) < 6:
-        exit()
-
     ver = bin_to_decimal(packet[0:3])
     type = bin_to_decimal(packet[3:6])
 
@@ -95,9 +80,9 @@ def parse_packet(packet):
             curr += pos
             sum_ver += ver
 
-        ans = agg(sum_ans, type)
+        fin = agg(sum_ans, type)
 
-        return 22 + length_of_bits, sum_ver, ans
+        return 22 + length_of_bits, sum_ver, fin
 
     else:
         num_sub_packets = bin_to_decimal(packet[7 :18])
@@ -112,11 +97,10 @@ def parse_packet(packet):
             sum_ans.append(ans)
             subs += 1
 
-        ans = agg(sum_ans, type)
+        fin = agg(sum_ans, type)
 
-        return 18 + total_pos, sum_ver, ans
+        return 18 + total_pos, sum_ver, fin
 
 pos, ver, ans = parse_packet(hex_to_binary(data))
 
 print(ans)
-
