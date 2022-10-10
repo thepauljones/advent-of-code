@@ -11,7 +11,7 @@ def play_game(pos, round_num=1):
 
     rolls = 0
     while rolls < num_rolls:
-        nums = roll_dice(round_num, True)
+        nums = roll_dice(round_num)
         rolls += 1
 
     player = int(round_num % 2 != 0)
@@ -43,17 +43,16 @@ def play_game(pos, round_num=1):
     play_game(pos, round_num + 3)
 
 
-def roll_dice(round, deterministic=False):
+def roll_dice(round):
     res = []
-    if (deterministic):
-        for x in range(3):
-            i = round + x
-            if (i > len(d) - 1):
-                i = i % len(d)
+    for x in range(3):
+        i = round + x
+        if (i > len(d) - 1):
+            i = i % len(d)
 
-            res.append(d[i])
+        res.append(d[i])
 
-        return res
+    return res
 
 
 play_game([6, 9], 0)
