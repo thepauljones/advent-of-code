@@ -74,4 +74,5 @@ def get_tops(towers):
     return ''.join(result)
 
 
-print(get_tops(towers))
+def test():
+    assert get_tops(towers) == 'VQZNJMWTR'
