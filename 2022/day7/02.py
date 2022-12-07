@@ -42,7 +42,7 @@ def parse_command(command):
 def getSize(dirNode, size = 0):
     for child in tree.children(dirNode.identifier):
         if child.data.element_type == 'dir':
-            size = getSize(child, size)
+            size = getSize(child, size) # In part one, this was a += (cumulative, duplicating files, and it needed to be an = here, duh)
         else:
             size += int(child.data.size)
 
@@ -62,14 +62,9 @@ def solve(data):
         parse_command(command)
 
     used = getUsedSpace()
-    print('USED', used)
     unused = total_drive_size - used
-
-    print('UNUSED', unused)
-
     min_delete = required - unused
 
-    print('MIN ', unused + min_delete)
 
     sizes = []
     for node in tree.all_nodes():
@@ -79,6 +74,8 @@ def solve(data):
             sizes.append(size)
 
     sizes.sort()
-    print(sizes[0])
+    result = sizes[0]
+    print(result)
+    return result
 
 solve(data)
