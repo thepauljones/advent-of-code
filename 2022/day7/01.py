@@ -1,0 +1,46 @@
+from pathlib import Path
+from treelib import Node, Tree
+
+script_location = Path(__file__).absolute().parent
+file_location = script_location / 'test-data.dat'
+file = file_location.open()
+
+data = file.read().splitlines()
+
+class File(object):
+        def __init__(self, size):
+            self.size = size
+
+
+tree = Tree()
+tree.create_node("/", "/")
+pwd = '/'
+
+def parse_command(command):
+    global pwd
+    elems = command.split(' ')
+
+    if elems[0] == '$':
+        if elems [1] == 'cd':
+            pwd = tree.parent(pwd).tag if elems[2] == ".." else elems[2]
+
+        if elems [1] == 'ls':
+            return
+    else:
+        if elems[0] == 'dir':
+            tree.create_node(elems[1], elems[1], parent=pwd)
+        else:
+            tree.create_node(elems[1], elems[1], parent=pwd, data=File(elems[0]))
+
+
+def solve(data):
+    for command in data:
+        parse_command(command)
+
+    tree.show()
+
+solve(data)
+
+def test():
+    assert solve() == 0
+
