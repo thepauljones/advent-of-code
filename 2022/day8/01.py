@@ -31,7 +31,13 @@ def solve(grid):
         for j in range(0, len(grid[i])):
             height = int(grid[i][j])
 
-            key = ''.join([str(i), str(j)])
+            
+            # Completely toxic and subtle fuckup in the first version of this line
+            # The co-ords 11, 1 and 1, 11 for example, result in the same key, so
+            # prefix it with the position id to make them all unique: this cost me too much hassle
+            # key = ''.join([str(i), str(j)])
+
+            key = ''.join(['i' + str(i), 'j' + str(j)])
             visible[key] = False
 
             toLeft = list(map(int, grid[i][0:j]))
@@ -68,15 +74,16 @@ def solve(grid):
 
 
     result = list(visible.values()).count(True)
-    print(result)
 
     for line in visibility:
         print(''.join(line))
 
+    print(result)
+
     return result
 
 solve(test_data)
-#solve(data)
+solve(data)
 
 
 def test():
