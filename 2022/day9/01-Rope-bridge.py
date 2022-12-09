@@ -1,8 +1,9 @@
 from pathlib import Path
 import time
+import math
 
 script_location = Path(__file__).absolute().parent
-file_location = script_location / 'test-data.dat'
+file_location = script_location / 'data.dat'
 file = file_location.open()
 
 data = [x.split(' ') for x in file.read().splitlines()]
@@ -24,34 +25,72 @@ def move(d, head, tail):
 
     dx, dy = directionVector
 
+    dis = math.sqrt(pow(tail[0] - head[0], 2) + pow(tail[1] - head[1], 2))
+    print('Distance', dis)
+    if (dis < 2):
+        return head, tail
+
+    # Diagonal
+    print('D', dx, dy)
     if dx > 0 and dy > 0:
         tail = (tail[0] + 1, tail[1] + 1)
+        print('piss')
+    elif dx < 0 and dy > 0:
+        tail = (tail[0] - 1, tail[1] + 1)
+        print('cum')
+    elif dx > 0 and dy < 0:
+        tail = (tail[0] + 1, tail[1] - 1)
+        print('squirt')
     elif dx < 0 and dy < 0:
         tail = (tail[0] - 1, tail[1] - 1)
+        print('tits')
+    # Adjacent
     else:
         if dx > 1:
+            print('ass')
             tail = (tail[0] + 1, tail[1])
-        if dx < 1:
+
+        if dx < -1:
+            print('pussy')
             tail = (tail[0] - 1, tail[1])
 
         if dy > 1:
+            print('gooch')
             tail = (tail[0], tail[1] + 1)
 
-        if dy < 1:
+        if dy < -1:
+            print('gob')
             tail = (tail[0], tail[1] - 1)
+
+    print('R: ', head, tail)
 
     return head, tail
 
 
 def show(head, tail):
     line = []
-    for y in range(6, -1, -1):
-        for x in range(0, 6):
+    min_size = 16
+    max_x = max([x[0] for x in [head, tail]]) + 1
+    max_y = max([x[1] for x in [head, tail]]) + 1
+
+    min_x = min([x[0] for x in [head, tail]]) - 1
+    min_y = min([x[1] for x in [head, tail]]) -1 
+
+    max_x = max(max_x, min_size)
+    max_y = max(max_y, min_size)
+
+    print('\n')
+
+    for y in range(max_y, min_y, -1):
+        for x in range(min_x, max_x):
             if (x == head[0] and y == head[1]):
                 line.append('H')
 
             elif (x == tail[0] and y == tail[1]):
                 line.append('T')
+
+            elif (x == 0 and y == 0):
+                line.append('0')
 
             else:
                 line.append('.')
@@ -64,17 +103,30 @@ def show(head, tail):
 
 def print_trail(trail):
     line = []
-    for y in range(6, -1, -1):
-        for x in range(0, 6):
+    min_size = 8
+    max_x = max([x[0] for x in trail])
+    max_y = max([x[1] for x in trail])
+
+    max_x = max(max_x, min_size)
+    max_y = max(max_y, min_size)
+
+    print('\n')
+
+    count = 0
+    for y in range(max_y, -1, -1):
+        for x in range(0, max_x):
             if (x, y) in trail:
                 line.append('#')
+                count += 1
             else:
                 line.append('.')
 
         line.append('\n')
     line.append('\n')
 
+
     print(''.join(line))
+    print('tail visited', count, 'locations')
 
 
 
@@ -83,8 +135,8 @@ def solve(ins):
     tail = (0, 0)
 
     trail = []
-
-    for instruction in ins[0:2]:
+    
+    for instruction in ins:
         steps = 0
         while steps < int(instruction[1]):
             head, tail = move(instruction[0], head, tail)
@@ -94,9 +146,9 @@ def solve(ins):
 
     print_trail(trail)
 
-    return 0
+    return len(trail)
 
-solve(data)
+print(solve(data))
 
 
 def test():
