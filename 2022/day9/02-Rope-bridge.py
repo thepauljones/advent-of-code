@@ -36,7 +36,7 @@ def move(d, knots):
         head = (head[0], head[1] - 1)
 
     knots[0] = head
-    for i in range(1, len(knots) - 1):
+    for i in range(1, len(knots)):
         head = knots[i - 1]
         tail = knots[i]
 
@@ -44,9 +44,11 @@ def move(d, knots):
 
         dx, dy = directionVector
 
+        print(knots)
         dis = math.sqrt(pow(tail[0] - head[0], 2) + pow(tail[1] - head[1], 2))
         if (dis < 1.5):
-            knots[i] = head
+            knots[i - 1] = head
+            knots[i] = tail
             return knots
 
         print(i, head, tail)
@@ -74,8 +76,8 @@ def move(d, knots):
             if dy < -1:
                 tail = (tail[0], tail[1] - 1)
 
-        knots[i] = head
-        knots[i + 1] = tail
+        knots[i - 1] = head
+        knots[i] = tail
 
     return knots
 
@@ -165,6 +167,7 @@ def solve(ins):
     print_trail(trail)
 
 solve(data)
+solve(real_data)
 
 def test():
     assert solve() == 0
