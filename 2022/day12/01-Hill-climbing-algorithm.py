@@ -2,7 +2,7 @@ from pathlib import Path
 from adjacents import get_adjacent
 
 script_location = Path(__file__).absolute().parent
-file_location = script_location / 'test-data.dat'
+file_location = script_location / 'data.dat'
 file = file_location.open()
 
 data = [list(x) for x in file.read().splitlines()]
@@ -48,7 +48,7 @@ def find_path(start, end, field):
 
     print_grid(field)
     path.reverse()
-    print(len(path))
+    return len(path) - 1
 
 
 def print_grid(field):
@@ -65,11 +65,11 @@ def solve(field):
                 field[i][j] = 'z'
                 end = (i, j)
 
-    print(start, end)
     path = find_path(start, end, field)
     return path
 
-solve(data)
+result = solve(data)
+print(result)
 
 def test():
     assert solve() == 0
