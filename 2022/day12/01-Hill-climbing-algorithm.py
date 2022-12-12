@@ -2,7 +2,7 @@ from pathlib import Path
 from adjacents import get_adjacent
 
 script_location = Path(__file__).absolute().parent
-file_location = script_location / 'data.dat'
+file_location = script_location / 'test-data.dat'
 file = file_location.open()
 
 data = [list(x) for x in file.read().splitlines()]
@@ -60,10 +60,13 @@ def solve(field):
         for i in range(len(field) - 1):
             if field [i][j] == 'S':
                 start = (i, j)
+                field[i][j] = 'a'
             if field [i][j] == 'E':
+                field[i][j] = 'z'
                 end = (i, j)
+
     print(start, end)
-    path = find_path((0, 0), end, field)
+    path = find_path(start, end, field)
     return path
 
 solve(data)
