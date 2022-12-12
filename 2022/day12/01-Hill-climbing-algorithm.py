@@ -58,10 +58,12 @@ def print_grid(field):
 def solve(field):
     for j in range(len(field[0]) - 1):
         for i in range(len(field) - 1):
+            if field [i][j] == 'S':
+                start = (i, j)
             if field [i][j] == 'E':
-                pos = (i, j)
-    print(pos)
-    path = find_path((0, 0), pos, field)
+                end = (i, j)
+    print(start, end)
+    path = find_path((0, 0), end, field)
     return path
 
 solve(data)
