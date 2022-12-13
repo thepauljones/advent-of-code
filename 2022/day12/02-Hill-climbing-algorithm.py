@@ -9,10 +9,6 @@ file = file_location.open()
 data = [list(x) for x in file.read().splitlines()]
 
 def find_path(start, end, current_field):
-    print('---start----')
-    print_grid(current_field)
-    print('---end----')
-
     frontier = []
 
     frontier.append((0, start))
@@ -53,7 +49,7 @@ def find_path(start, end, current_field):
     for j, i in path:
         current_field[j][i] = '\u2588'
 
-    print_grid(current_field)
+    #print_grid(current_field)
     path.reverse()
     return len(path) - 1
 
@@ -80,8 +76,10 @@ def solve(field):
     paths.sort()
     return paths[0]
 
+import time
+start_time = time.time()
 result = solve(data)
-print(result)
+print("--- %s seconds ---" % (time.time() - start_time), '-----', result)
 
 def test():
     assert solve() == 0
