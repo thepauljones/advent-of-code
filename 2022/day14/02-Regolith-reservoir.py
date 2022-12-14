@@ -17,16 +17,21 @@ data = file.read().splitlines()
 sandPoint = (0, 500)
 
 cave = []
-for i in range(510):
+for i in range(910):
     row = []
-    for j in range(510):
+    for j in range(910):
         row.append('.')
     cave.append(row)
 
+floor = 0
+
 def draw_line(a, b):
+    global floor
     x0, y0 = a
     x1, y1 = b
     
+    floor = max(floor, y0, y1)
+
     if x0 == x1:
         for y in range(min(y0, y1), max(y0, y1) + 1):
             cave[y][x0] = '#'
@@ -36,16 +41,19 @@ def draw_line(a, b):
             cave[y0][x] = '#'
 
 
+
 for line in data:
     points = line.split(' -> ')
     for i in range(len(points) - 1): 
         draw_line([int(x) for x in points[i].split(',')], [int(x) for x in points[i + 1].split(',')])
 
+for i in range(len(cave[0])):
+    cave[floor + 2][i] = '#'
 
 activeGrain = sandPoint
 grains = []
 while True:
-    if activeGrain[0] + 1 > 508:
+    if cave[sandPoint[0]][sandPoint[1]] == 'o':
         for i in range(0, 20):
             for j in range(480, len(cave[i])):
                 print(cave[i][j], end='')
