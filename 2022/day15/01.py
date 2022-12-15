@@ -30,14 +30,32 @@ for line in data:
 
 
 def drawMap():
+    fullMap = {}
     for y in range(originY, height):
         for x in range(originX, width):
             if (x,y) in beaconMap:
-                print('X', end='')
-            else:
-                print('.', end='')
-        print('\n')
+                fullMap[(x, y)] = 'S'
+                fullMap[(beaconMap[(x,y)][0], beaconMap[(x,y)][1])] = 'B'
 
+    for sensor in beaconMap:
+        sx, sy = sensor
+        bx, by = beaconMap[sensor]
+
+        distance = abs(sx-bx) + abs(sy-by)
+
+        for y in range(originY, height):
+            for x in range(originX, width):
+                if abs(x-bx) + abs(y-by) < distance:
+                    if (x, y) not in fullMap:
+                        fullMap[(x,y)] = '#'
+
+    for y in range(originY, height):
+        for x in range(originX, width):
+            if (x, y) in fullMap:
+                print(fullMap[(x, y)], end='')
+            else: 
+                print('.', end='')
+        print()
 
 drawMap()
 
