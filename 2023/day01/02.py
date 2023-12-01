@@ -1,5 +1,8 @@
 from pathlib import Path
 import re
+import sys
+from termcolor import colored, cprint
+from threading import Timer
 
 script_location = Path(__file__).absolute().parent
 file_location = script_location / "data.dat"
@@ -33,7 +36,13 @@ def solve():
         "9",
     ]
 
+    def printThing(one, two, middle):
+        one = colored(one, "green")
+        two = colored(two, "red")
+        print(one + middle + two)
+
     total = 0
+    count = 1
     for line in data:
         first = 1000000000
         last = -1
@@ -45,6 +54,12 @@ def solve():
             if item in line and line.rfind(item) > last:
                 last = line.rfind(item)
                 numtwo = item
+
+        count += 1
+        t = Timer(
+            0.1 * count, printThing, [numone, numtwo, line[len(numone) : -len(numtwo)]]
+        )
+        t.start()
 
         firstValue = numone
         secondValue = numtwo
