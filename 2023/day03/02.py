@@ -48,7 +48,7 @@ non_symbols = digits + ["."]
 
 
 print(
-    "commit to test this => "
+    "second commit to test this => "
 )  # git add . && git commit -am 'meuk' && git push && say 'Fuck it' ENTER
 
 
