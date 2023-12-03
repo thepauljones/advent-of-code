@@ -47,6 +47,11 @@ digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 non_symbols = digits + ["."]
 
 
+print(
+    "commit to test this => "
+)  # git add . && git commit -am 'meuk' && git push && say 'Fuck it' ENTER
+
+
 def solve():
     answer = 0
     gearMap = {}
