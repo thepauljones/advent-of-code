@@ -48,25 +48,6 @@ def solve():
             if engine[j][i] in digits:
                 currentDigit.append(engine[j][i])
                 currentDigitAdjacents.extend(get_adjacent(j, i, engine))
-                # FUCKING DUPLICATING THE CHECK BECAUSE THE NUMBER ENDED AT THE END OF A LINE
-                # AND RUINED MY MORNING :(
-                if i == len(engine[0]) - 1:
-                    if len(currentDigit) > 0:
-                        print(currentDigit)
-                        print(currentDigitAdjacents)
-                        adjacentSymbols = list(
-                            set(currentDigitAdjacents).difference(non_symbols)
-                        )
-                        if len(adjacentSymbols) > 0:
-                            allDigits.append(int("".join(currentDigit)))
-                            print(
-                                "adding "
-                                + str(allDigits[-1])
-                                + " because of "
-                                + ",".join(adjacentSymbols)
-                            )
-                        currentDigit = []
-                        currentDigitAdjacents = []
             else:
                 if len(currentDigit) > 0:
                     print(currentDigit)
