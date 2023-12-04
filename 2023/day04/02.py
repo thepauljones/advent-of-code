@@ -1,31 +1,43 @@
 from pathlib import Path
 
 script_location = Path(__file__).absolute().parent
-file_location = script_location / "test-data.dat"
+file_location = script_location / "data.dat"
 file = file_location.open()
 
-data = file.read().splitlines()
+input = file.read().splitlines()
+
+inputMap = {}
+
+for line in input:
+    cardPoints = 0
+    gamePart, numberSets = line.split(":")
+    _, gameId = gamePart.split()
+
+    inputMap[int(gameId)] = line
 
 
-def solve():
-    answer = 0
+def solve(data):
     for line in data:
-        cardPoints = 0
+        cardPoints = []
         gamePart, numberSets = line.split(":")
         _, gameId = gamePart.split()
         winning, scratchcard = [x.split() for x in numberSets.split("|")]
+        winning = list(map(int, winning))
+        scratchcard = list(map(int, scratchcard))
 
+        count = 0
         for x in winning:
             if x in scratchcard:
-                print(x, "is winning")
-                if cardPoints == 0:
-                    cardPoints = 1
-                else:
-                    cardPoints *= 2
+                count = count + 1
+                cardPoints.append(int(int(gameId) + count))
 
-        answer += cardPoints
+        for y in cardPoints:
+            data.append(inputMap[y])
+            # print("Game ", gameId, " wins ", inputMap[y])
 
-    print(answer)
+    return len(data)
 
 
-solve()
+answer = solve(input[:])
+
+print(answer)

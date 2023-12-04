@@ -17,7 +17,6 @@ def solve():
 
         for x in winning:
             if x in scratchcard:
-                print(x, "is winning")
                 if cardPoints == 0:
                     cardPoints = 1
                 else:
