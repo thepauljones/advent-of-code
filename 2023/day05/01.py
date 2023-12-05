@@ -2,7 +2,7 @@ from pathlib import Path
 from collections import defaultdict
 
 script_location = Path(__file__).absolute().parent
-file_location = script_location / "test-data.dat"
+file_location = script_location / "data.dat"
 file = file_location.open()
 
 data = file.read().splitlines()
@@ -34,22 +34,27 @@ for line in rawMaps:
     sourceDestinationRange = [int(x) for x in line.split(" ")]
     maps[">".join(currentMap)].append(sourceDestinationRange)
 
-for seed in seeds:
-    current = maps["seed" + ">soil"]
-    for m in current:
-        source, dest, r = m
 
-        count = 1
+def getMapped(f, to, seeds):
+    result = []
+    for seed in seeds:
+        current = maps[f + ">" + to]
         mappedValue = seed
-        if seed in range(source, source + r):
-            count += 1
-            mappedValue = seed + count
+        for m in current:
+            dest, source, r = m
+            sourceRange = range(source, source + r)
+            destRange = range(dest, dest + r)
 
-    print("seed: ", seed, mappedValue)
+            if seed in sourceRange:
+                t = sourceRange.index(seed)
+                mappedValue = destRange[t]
+
+        result.append(mappedValue)
+
+    return result
 
 
-def solve():
-    print(seeds)
+for i in range(len(allTypes) - 1):
+    seeds = getMapped(allTypes[i], allTypes[i + 1], seeds[:])
 
-
-solve()
+print(min(seeds))
