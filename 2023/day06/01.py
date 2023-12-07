@@ -26,9 +26,11 @@ def score_hand(hand):
             leadingCard = card
         highestCount = max(highestCount, hand.count(card))
 
+    # A poker
     if highestCount == 5:
         score = 7
 
+    # four of a kind
     if highestCount == 4:
         score = 6
 
@@ -38,8 +40,10 @@ def score_hand(hand):
             if c != leadingCard:
                 rest.append(c)
 
+        # full house
         if rest[0] == rest[1]:
             score = 5
+        # three of a kind
         else:
             score = 4
 
@@ -49,12 +53,23 @@ def score_hand(hand):
             if hand.count(c) > 1:
                 pairs.append(c)
 
+        # two pair
         if len(set(pairs)) > 1:
             score = 3
+        # one pair
         else:
             score = 2
 
     return score
+
+
+assert score_hand("JJJJJ") == 7
+assert score_hand("AJJJJ") == 6
+assert score_hand("2J2JJ") == 5
+assert score_hand("AJ2JJ") == 4
+assert score_hand("AJ22J") == 3
+assert score_hand("AT22J") == 2
+assert score_hand("AT23J") == 1
 
 
 def compare_hands(a, b):
@@ -66,7 +81,8 @@ def compare_hands(a, b):
         return 1
 
     # compare individual cards
-    for i in range(len(a)):
+    for i in range(len(a[0])):
+        print(i)
         r = cards.index(a[0][i]) - cards.index(b[0][i])
         if r < 0:
             return -1
@@ -90,5 +106,3 @@ while len(sorted_hands):
 
 
 print(ans)
-
-# 252640338 this is the answer! for sure just waiting for the timer to let me put it in in 9 minutes but committing it now for the power play
