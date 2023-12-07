@@ -20,17 +20,17 @@ def score_hand(hand):
     leadingCard = ""
     score = 1
 
-    for i, card in enumerate(hand):
+    for card in hand:
         if highestCount < hand.count(card):
             highestCount = hand.count(card)
             leadingCard = card
         highestCount = max(highestCount, hand.count(card))
 
     if highestCount == 5:
-        score = 6
+        score = 7
 
     if highestCount == 4:
-        score = 5
+        score = 6
 
     if highestCount == 3:
         rest = []
@@ -58,7 +58,7 @@ def score_hand(hand):
 
 
 def compare_hands(a, b):
-    r = score_hand(b[0]) - score_hand(a[0])
+    r = score_hand(a[0]) - score_hand(b[0])
     if r < 0:
         return -1
 
@@ -67,14 +67,12 @@ def compare_hands(a, b):
 
     # compare individual cards
     for i in range(len(a)):
-        r = cards.index(b[0][i]) - cards.index(a[0][i])
+        r = cards.index(a[0][i]) - cards.index(b[0][i])
         if r < 0:
             return -1
 
         if r > 0:
             return 1
-        if abs(r) > 0:
-            return r
 
     return r
 
@@ -84,12 +82,13 @@ sorted_hands.reverse()
 
 ans = 0
 
-for i, hand in enumerate(sorted_hands):
-    val = hand[1] * (i + 1)
-
-    ans += val
-
 print(sorted_hands)
 
+while len(sorted_hands):
+    val = sorted_hands.pop(0)[1] * (len(sorted_hands) + 1)
+    ans += val
+
+
 print(ans)
-# 252859880 was too high
+
+# 252640338 this is the answer! for sure just waiting for the timer to let me put it in in 9 minutes but committing it now for the power play
