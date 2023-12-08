@@ -1,5 +1,5 @@
 from pathlib import Path
-from tqdm import tqdm
+from math import gcd
 
 script_location = Path(__file__).absolute().parent
 file_location = script_location / "data.dat"
@@ -63,9 +63,6 @@ def solve(start, targets):
         if i > len(directions) - 1:
             i = 0
 
-        if loops > 1000000:
-            return loops
-
     return loops
 
 
@@ -77,9 +74,11 @@ for s in starts:
     loops.append(solve(s, destinations))
 
 
-print(loops)
-ans = 1
-for i in range(len(loops) - 1):
-    ans += loops[i] * loops[i + 1]
+print(
+    loops
+)  # these are the lowest number of loops per start to get to AN end target, so the least common multiple of these is the answer
 
-print(ans - 1)
+lcm = 1
+for i in loops:
+    lcm = lcm * i // gcd(lcm, i)
+print(lcm)
