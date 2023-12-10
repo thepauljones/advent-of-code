@@ -14,14 +14,12 @@ for line in data:
 def get_next(reading):
     new_reading = []
     for i in range(len(reading) - 1):
-        new_reading.append(abs(reading[i] - reading[i + 1]))
+        new_reading.append(reading[i + 1] - reading[i])
 
     return new_reading
 
 
-assert get_next([0, 1, 1, 0]) == [1, 0, 1]
 assert get_next([0, 3, 6, 9, 12, 15]) == [3, 3, 3, 3, 3]
-assert get_next([0, -3, 6, 9, 12, 15]) == [3, 9, 3, 3, 3]
 
 
 def solve(reading):
@@ -46,10 +44,7 @@ def solve(reading):
     full[0].append(0)
 
     for i in range(1, len(full)):
-        one = full[i - 1][-1]
-        two = full[i][-1]
-        print("Adding ", one, " + ", two)
-        full[i].append(one + two)
+        full[i].append(full[i - 1][-1] + full[i][-1])
 
     print(full)
     return full[-1][-1]
@@ -57,8 +52,6 @@ def solve(reading):
 
 ans = 0
 for r in readings:
-    res = solve(r)
-    print("ans", ans, " + res", res, " = ")
     ans += solve(r)
 
 
