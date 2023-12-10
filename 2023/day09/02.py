@@ -19,9 +19,6 @@ def get_next(reading):
     return new_reading
 
 
-assert get_next([0, 3, 6, 9, 12, 15]) == [3, 3, 3, 3, 3]
-
-
 def solve(reading):
     res = get_next(reading)
 
@@ -52,6 +49,7 @@ def solve(reading):
 
 ans = 0
 for r in readings:
+    r.reverse()
     ans += solve(r)
 
 
