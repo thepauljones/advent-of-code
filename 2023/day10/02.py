@@ -1,7 +1,6 @@
 from os import getcwd
 from pathlib import Path
 
-import matplotlib.pyplot as plt
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 
@@ -68,7 +67,7 @@ def get_connected(pos, prevPos):
                     return adj[1]
                     result.append(adj[1])
 
-    print("FUCKED")
+    print('should never get here')
     exit()
 
 
@@ -104,23 +103,12 @@ pipe = [startPos]
 checked = [startPos]
 
 next = get_connected(startPos, startPos)
-print("First next", next, pipe)
 while next != startPos:
     pipe.append(next)
     next = get_connected(pipe[-1], pipe[-2])
-    print("next", pipe[-1])
-    print("prev", pipe[-2])
 
 
-print(int(len(list(set(pipe))) / 2))
-
-for j in range(len(field)):
-    for i in range(len(field[j])):
-        if (j, i) in pipe:
-            print("*", end="")
-        else:
-            print(field[j][i], end="")
-
+print('Furthest point:', int(len(list(set(pipe))) / 2))
 
 polyPoints = []
 
