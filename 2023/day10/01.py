@@ -2,7 +2,7 @@ from os import getcwd
 from pathlib import Path
 
 script_location = Path(__file__).absolute().parent
-file_location = script_location / "test-data.dat"
+file_location = script_location / "data.dat"
 file = file_location.open()
 
 
@@ -32,28 +32,29 @@ def get_connected(pos):
     result = []
 
     for adj in adjs:
-        char, pos = adj
-        localY, localX = pos
+        char, posA = adj
+        localY, localX = posA
 
         if localX == x:
             # same x, is underneath
-            if localY > y:
-                if char in ["|", "L", "J"]:
-                    result.append(adj)
+            if localY > y and field[y][x] in ["|", "7", "F", "S"]:
+                if char in ["|", "L", "J", "S"]:
+                    result.append(adj[1])
 
             # same x y is above
-            if localY < y:
-                if char in ["|", "7", "F"]:
-                    result.append(adj)
+            if localY < y and field[y][x] in ["|", "J", "L", "S"]:
+                if char in ["|", "7", "F", "S"]:
+                    result.append(adj[1])
 
         if localY == y:
-            if localX > x:
-                if char in ["-", "7", "J"]:
-                    result.append(adj)
+            # is to the right
+            if localX > x and field[y][x] in ["-", "L", "F", "S"]:
+                if char in ["-", "7", "J", "S"]:
+                    result.append(adj[1])
 
-            if localX < x:
-                if char in ["-", "F", "L"]:
-                    result.append(adj)
+            if localX < x and field[y][x] in ["-", "7", "J", "S"]:
+                if char in ["-", "F", "L", "S"]:
+                    result.append(adj[1])
 
     return result
 
@@ -85,7 +86,27 @@ for i, line in enumerate(field):
         startPos = (i, line.index("S"))
 # find start
 #
-pipe = [startPos]
 
-connected = get_connected(startPos)
-print(connected)
+pipe = [startPos]
+checked = [startPos]
+
+for item in checked:
+    connected = get_connected(item)
+    for conn in connected:
+        if conn not in checked:
+            pipe.append(conn)
+            checked.append(conn)
+
+
+print(len(list(set(pipe))) / 2)
+
+for j in range(len(field)):
+    for i in range(len(field[j])):
+        if (j, i) in pipe:
+            print("*", end="")
+        else:
+            print(field[j][i], end="")
+
+    print()
+
+# 8493 too high
