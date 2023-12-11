@@ -2,7 +2,7 @@ from pathlib import Path
 from tqdm import tqdm
 
 script_location = Path(__file__).absolute().parent
-file_location = script_location / "test-data.dat"
+file_location = script_location / "data.dat"
 file = file_location.open()
 
 rows = file.read().splitlines()
@@ -24,6 +24,16 @@ for i in range(len(rows[0])):
     cols.append(get_col(i))
 
 
+def insert_row_at(i):
+    row = ["."] * len(rows[0])
+    sky.insert(i, row)
+
+
+def insert_col_at(i):
+    for line in sky:
+        line.insert(i, ".")
+
+
 def is_empty(t):
     return list(set(t)) == ["."]
 
@@ -38,22 +48,17 @@ for i in range(len(sky[0])):
     if is_empty(get_col(i)):
         cols_to_insert.append(i)
 
-rows_to_insert.reverse()
 cols_to_insert.reverse()
+rows_to_insert.reverse()
 
 
 def print_sky(galaxy_positions):
     count = 1
+    max_x = max([x for y, x in galaxy_positions])
+    max_y = max([y for y, x in galaxy_positions])
 
-    maxX = 0
-    maxY = 0
-    for g in galaxy_positions:
-        y, x = g
-        maxX = max(maxX, x)
-        maxY = max(maxY, y)
-
-    for j in range(maxY + 1):
-        for i in range(maxX + 1):
+    for j in range(max_y + 1):
+        for i in range(max_x + 1):
             if (j, i) in galaxy_positions:
                 print(count, end="")
                 count += 1
@@ -81,9 +86,8 @@ for j in range(len(sky)):
 
 # expand universe!
 def expand(g):
-    step = 1
+    step = 1000000 - 1
     y, x = g
-
     for r in rows_to_insert:
         if r < y:
             y += step
@@ -95,21 +99,15 @@ def expand(g):
     return (y, x)
 
 
-expanded = []
-for g in galaxy_positions:
-    expanded.append(expand(g))
-# print_sky(galaxy_positions[:])
-print_sky(expanded[:])
+galaxy_positions = list(map(expand, galaxy_positions))
 
 # expand universe!
 
 pairs = []
-for g in expanded:
-    for p in [x for x in expanded if x != g]:
+for g in galaxy_positions:
+    for p in [x for x in galaxy_positions if x != g]:
         if [g, p] not in pairs and [p, g] not in pairs:
             pairs.append([g, p])
-
-print("len pairs", len(pairs))
 
 assert get_distance([(6, 1), (11, 5)]) == 9, "Manhattan distance not working"
 assert get_distance([(1, 1), (-1, -1)]) == 4, "Manhattan distance not working"
