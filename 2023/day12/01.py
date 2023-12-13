@@ -1,5 +1,6 @@
 from pathlib import Path
 from collections import defaultdict
+from functools import cache
 
 script_location = Path(__file__).absolute().parent
 file_location = script_location / "data.dat"
@@ -14,6 +15,16 @@ data = [
 ]
 
 
+def map_springs(line):
+    m, groups = line
+    result = [(m + "?") * 5, groups * 5]
+    return result
+
+
+data = list(map(map_springs, data))
+
+
+@cache
 def get_count_groups(pattern):
     isGroup = False
     result = []
@@ -44,6 +55,7 @@ assert get_count_groups("..#.###") == [1, 3]
 assert get_count_groups("....###") == [3]
 
 
+@cache
 def replacements(pattern):
     if pattern == "":
         return [""]
