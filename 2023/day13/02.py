@@ -205,19 +205,16 @@ def solve():
         count += 1
 
     count = 0
-
     vert = 0
     hor = 0
-    # second run
-    print(map)
     for m in mirrors:
-        _, v = map[str(count)]
+        t, v = map[str(count)]
 
-        val = try_is_vertically_symmetrical_at(m[:], v)
+        val = try_is_vertically_symmetrical_at(m[:], v if t == "V" else -1)
         if val is not None:
             vert += val
 
-        hVal = try_is_horizontally_symmetrical_at(m[:], v)
+        hVal = try_is_horizontally_symmetrical_at(m[:], v if t == "H" else -1)
         if hVal is not None:
             hor += hVal
 
