@@ -13,6 +13,7 @@ for line in all_input:
     if line == "":
         mirrors.append(current_mirror)
         current_mirror = []
+        continue
 
     current_mirror.append(list(line))
 
@@ -75,7 +76,7 @@ def split_mirror_horizontally_at(mirror, i):
 
 
 def is_vertically_symmetrical_at(mirror, i):
-    if i > len(mirror[0]) - 1:
+    if i > len(mirror[0]) - 1 or i < 1:
         return False
 
     left, right = split_mirror_vertically_at(mirror, i)
@@ -108,51 +109,48 @@ def is_horizontally_symmetrical_at(mirror, i):
 
 def print_mirror(m):
     for line in m:
+        print("LINE>: ", end="")
         print("".join(line))
-    print()
+
+    print("\n")
 
 
 def print_mirror_with_horizontal_reflector(m, i):
-    print("found horizontal")
     for j, line in enumerate(m):
         if j == i:
             print("-" * len(line))
         print("".join(line))
-    print()
-    print()
-    print()
-    print()
+
+    print("\n")
 
 
 def print_mirror_with_vertical_reflector(m, i):
-    print("found vertical")
     for line in m:
         line.insert(i, "|")
         print("".join(line))
 
-    print()
-    print()
-    print()
+    print("\n")
 
 
 def solve():
     vert = 0
     hor = 0
+    count = 0
     for m in mirrors:
-        loop = max(len(m), len(m[0]))
+        count += 1
+        for width in range(len(m[0])):
+            if is_vertically_symmetrical_at(m[:], width):
+                print_mirror_with_vertical_reflector(m[:], width)
+                vert += width
 
-        for j in range(loop):
-            if is_vertically_symmetrical_at(m, j):
-                print_mirror_with_vertical_reflector(m, j)
-                vert += j
+        for height in range(len(m)):
+            if is_horizontally_symmetrical_at(m[:], height):
+                print_mirror_with_horizontal_reflector(m[:], height)
+                hor += height
 
-            if is_horizontally_symmetrical_at(m, j):
-                print_mirror_with_horizontal_reflector(m, j)
-                hor += j
-
-    print(vert)
-    print(hor)
     return vert + (hor * 100)
 
 
 print(solve())
+
+# wrong 37728
