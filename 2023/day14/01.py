@@ -34,10 +34,20 @@ def evaluate(map):
     print(ans)
 
 
+# Slides rocks to north of grid
 def slide(grid):
+    # zip  basically gives you a matrix transform of 90 degrees and list then makes it an array again
+    # essentially rotating it to the left to allow easier calcualtions
     cols = list(zip(*grid))
 
     map = []
+    # for each line, split around rocks, then the count of the rocks
+    # is the same as moving them to the left (which is the "Top, or north" in this case)
+    # then make a list of tuples where the left value is the "power of the line"
+    # i.e. the length, minus the index, so the left most, (north-most line is the length of the array - it's index, (0))
+    # and then you multiply that number by the number of rocks, removing 1 each time, for subsequent rows
+    #
+    # add these up for the whole grid and Robert's your mothers brother
     for line in cols:
         map_line = []
         segments = "".join(line).split("#")
