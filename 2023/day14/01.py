@@ -60,7 +60,6 @@ def slide(grid):
 
         map.append(map_line)
 
-    print(map)
     print(evaluate(map))
 
 

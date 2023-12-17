@@ -24,26 +24,15 @@ def calc_seg(seg):
     return result
 
 
-def evaluate(grid):
-    map = []
-    for line in grid:
-        map_line = []
-        segments = "".join(line).split("#")
-
-        pos = 0
-        for seg in segments:
-            if seg.count("O") > 0:
-                map_line.append((len(line) - pos, seg.count("O")))
-            pos += len(seg) + 1
-
-        map.append(map_line)
-
+def evaluate(g):
     ans = 0
-    for line in map:
-        for seg in line:
-            ans += calc_seg(seg)
+    i = 0
+    for line in g:
+        score = max(0, line.count("O") * abs(len(g) - i))
+        ans += score
+        i += 1
 
-    print("Answer:", ans)
+    return ans
 
 
 @functools.cache
@@ -93,21 +82,45 @@ def slide_east(grid):
 
 
 # slide north -> west - > south - > east
-def rotation(grid):
+def rotation(grid, shouldPrint):
     slid = slide_north(grid)
+    if shouldPrint:
+        print("North")
+        p(slid)
     slid = slide_west(slid)
+    if shouldPrint:
+        print("West")
+        p(slid)
     slid = slide_south(slid)
+    if shouldPrint:
+        print("South")
+        p(slid)
     slid = slide_east(slid)
+    if shouldPrint:
+        print("East")
+        p(slid)
 
     return slid[:]
 
 
-e = []
-for i in tqdm(range(100000)):
-    data = rotation(data[:])
-    e.append(evaluate(data))
+scores = []
+repeats = []
+loop_size = 0
+first = 1
 
-print(min(e))
+for i in tqdm(range(1000)):
+    data = rotation(data[:], False)
+    score = evaluate(data)
+
+    if score in scores:
+        print("repeat:", i)
+        scores.append(score)
+        first = i + 1
+
+    scores.append(score)
+
+
+print(scores)
 
 
 def solve():
@@ -116,3 +129,18 @@ def solve():
 
 def test():
     assert solve() == 0
+
+
+# too low 100354
+#
+#
+#
+#
+#  also not right
+#
+#  not right
+#  also not right
+#
+#  tried
+#
+#  tried down to 104450 :/

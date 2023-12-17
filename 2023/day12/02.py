@@ -1,4 +1,5 @@
 from pathlib import Path
+from tqdm import tqdm
 from functools import cache
 
 script_location = Path(__file__).absolute().parent
@@ -20,38 +21,36 @@ def expand_input(line):
     return result
 
 
-data = list(map(expand_input, data))
+# data = list(map(expand_input, data))
 
 
-@cache
 def fits(pattern, groups, i, groupI, currentBlockLength):
-    if i > len(pattern) - 1:
-        return 0
-
-    if groupI == len(groups) - 1:
-        return 1
-
     ans = 0
     if pattern[i] == "?":
-        for char in "#.":
+        for char in ".#":
             ans += fits(
-                char + "".join(pattern[1:]), groups, i, groupI, currentBlockLength
+                char + "".join(pattern[1:]), groups, i + 1, groupI, currentBlockLength
             )
 
     if pattern[i] == "#":
         if currentBlockLength == groups[groupI]:
-            ans += fits(pattern, groups, i + 1, groupI + 1, 0)
+            print("ANUS")
+            print("ANAsL", currentBlockLength, groups, groupI, groups[groupI])
+            return fits(pattern, groups, i + 1, groupI + 1, 0)
         else:
-            ans += fits(pattern, groups, i + 1, groupI, currentBlockLength + 1)
+            print("ANAL", currentBlockLength, groups, groupI, groups[groupI])
+            return fits(pattern, groups, i + 1, groupI, currentBlockLength + 1)
 
     if pattern[i] == ".":
-        ans += fits(pattern, groups, i + 1, groupI, 0)
+        print("oh my hemel")
+        return fits(pattern, groups, i + 1, groupI, 0)
 
     return ans
 
 
 ans = 0
-for line in data:
+for i in tqdm(range(len(data))):
+    line = data[i]
     (
         p,
         g,
