@@ -11,10 +11,15 @@ data = [list(x) for x in file.read().splitlines()]
 lit = {}
 
 
+split = {}
+
+
 def show_energized():
+    count = 0
     for j, line in enumerate(data):
         for i, char in enumerate(line):
             if (j, i) in lit:
+                count += 1
                 print("#", end="")
             else:
                 print(char, end="")
@@ -24,85 +29,98 @@ def show_energized():
     print("\n")
     print("\n")
 
+    return count
 
-def project_beam(pos, vector, prevVec):
-    time.sleep(0.1)
+
+def project_beam(pos, vector):
+    time.sleep(0.3)
     show_energized()
+
     pj, pi = pos
     vj, vi = vector
 
-    pvj, pvi = prevVec
+    lit[(pj, pi)] = True
 
     if pi > len(data[0]) - 1 or pi < 0:
+        print("ENDED RUN horizontal")
         return
 
     if pj > len(data) - 1 or pj < 0:
+        print("ENDED RUN vert")
         return
 
     lit[(pj, pi)] = True
 
+    newVI = vi
+    newVJ = vj
+
     # handle mirrors and splitters
     if data[pj][pi] == "/":
-        if pvi == 1:
-            vi = 0
-            vj = -1
-        if pvi == -1:
-            vi = 0
-            vj = 1
-        if pvj == 1:
-            vj = 0
-            vi = -1
-        if pvj == -1:
-            vi = 1
-            vj = 0
-
-        print("Hit up mirror with prevVec", prevVec)
+        if vi == 1:  # came from the left
+            newVJ = -1  # go up
+            newVI = 0
+        if vi == -1:  # came from the right
+            newVJ = 1  # go down
+            newVI = 0
+        if vj == 1:  # came from above
+            newVI = -1  # go left
+            newVJ = 0
+        if vj == -1:  # came from below
+            newVJ = 0  # go right
+            newVI = 1
 
     if data[pj][pi] == "\\":
-        if pvi == 1:
-            vi = 0
-            vj = 1
-        if pvi == -1:
-            vi = 0
-            vj = -1
-        if pvj == -1:
-            vi = -1
-            vj = 0
-        if pvj == 1:
-            vi = 1
-            vj = 0
+        if vi == 1:  # came from the left
+            newVJ = 1  # go down
+            newVI = 0
+        if vi == -1:  # came from the right
+            newVJ = -1  # go up
+            newVI = 0
+        if vj == 1:  # came from above
+            newVJ = 0  # go right
+            newVI = 1
+        if vj == -1:  # came from below
+            newVI = -1  # go left
+            newVJ = 0
 
     if data[pj][pi] == "-":
-        if vi != 0:  # going horizontally
-            pass
-        else:
+        if vj != 0:
+            if (pj, pi) in split:
+                return
             # continue in one direction, and call project_beam again for the other
-            vi = -1
-            vj = 0
+            newVI = 1
+            newVJ = 0
+
+            print("split left")
             project_beam(
-                (pj, pi + 1), (0, 1), vector
-            )  # recrusively call project beam for split direction
+                (pj, pi - 1), (0, -1)
+            )  # recursively call project beam for split direction
+            split[(pj, pi)] = True
 
     if data[pj][pi] == "|":
-        if vj != 0:  # going vertically
-            pass
-        else:
+        if vi != 0:
+            if (pj, pi) in split:
+                return
             # continue in one direction, and call project_beam again for the other
-            vj = -1
-            vi = 0
-            project_beam(
-                (pj + 1, pi), (1, 0), vector
-            )  # recrusively call project beam for split direction
+            newVJ = -1
+            newVI = 0
 
-    project_beam((pj + vj, pi + vi), (vj, vi), (vj, vi))
+            print("split down")
+            project_beam(
+                (pj, pi), (1, 0)
+            )  # recursively call project beam for split direction
+            split[(pj, pi)] = True
+
+    project_beam((pj + newVJ, pi + newVI), (newVJ, newVI))
 
 
 # Start beam
-project_beam((0, 0), (0, 1), (0, 1))
+project_beam((0, 0), (0, 1))
 
 
-show_energized()
-print(len(lit))
+answer = show_energized()
+
+print(answer)
 
 
 def solve():
