@@ -1,8 +1,10 @@
 from pathlib import Path
+import sys
 import time
 
+sys.setrecursionlimit(2500)
 script_location = Path(__file__).absolute().parent
-file_location = script_location / "test-data.dat"
+file_location = script_location / "data.dat"
 file = file_location.open()
 
 data = [list(x) for x in file.read().splitlines()]
@@ -33,9 +35,6 @@ def show_energized():
 
 
 def project_beam(pos, vector):
-    time.sleep(0.3)
-    show_energized()
-
     pj, pi = pos
     vj, vi = vector
 
@@ -90,12 +89,12 @@ def project_beam(pos, vector):
             # continue in one direction, and call project_beam again for the other
             newVI = 1
             newVJ = 0
+            split[(pj, pi)] = True
 
             print("split left")
             project_beam(
                 (pj, pi - 1), (0, -1)
             )  # recursively call project beam for split direction
-            split[(pj, pi)] = True
 
     if data[pj][pi] == "|":
         if vi != 0:
@@ -105,11 +104,12 @@ def project_beam(pos, vector):
             newVJ = -1
             newVI = 0
 
+            split[(pj, pi)] = True
+
             print("split down")
             project_beam(
                 (pj, pi), (1, 0)
             )  # recursively call project beam for split direction
-            split[(pj, pi)] = True
 
     project_beam((pj + newVJ, pi + newVI), (newVJ, newVI))
 
