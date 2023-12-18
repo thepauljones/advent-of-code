@@ -3,10 +3,10 @@ from tqdm import tqdm
 import functools
 
 script_location = Path(__file__).absolute().parent
-file_location = script_location / "test-data.dat"
+file_location = script_location / "data.dat"
 file = file_location.open()
 
-data = [x for x in file.read().splitlines()]
+data = tuple([tuple(x) for x in file.read().splitlines()])
 
 
 def p(grid):
@@ -55,7 +55,7 @@ def slide_north(grid):
     for line in cols:
         slid.append(s(line))
 
-    slid = list(zip(*slid))
+    slid = tuple(zip(*slid))
 
     return slid
 
@@ -70,18 +70,19 @@ def slide_west(grid):
 
 
 def slide_south(grid):
-    return list(reversed(slide_north(reversed(grid))))
+    return tuple(reversed(slide_north(reversed(grid))))
 
 
 def slide_east(grid):
     slid = []
     for line in grid:
-        slid.append(list(reversed(s(reversed(line)))))
+        slid.append(tuple(reversed(s(reversed(line)))))
 
     return slid
 
 
 # slide north -> west - > south - > east
+@functools.lru_cache(maxsize=None)
 def rotation(grid, shouldPrint):
     slid = slide_north(grid)
     if shouldPrint:
@@ -109,18 +110,25 @@ loop_size = 0
 first = 1
 
 for i in tqdm(range(1000)):
-    data = rotation(data[:], False)
+    data = rotation(tuple(data), False)
     score = evaluate(data)
-
-    if score in scores:
-        print("repeat:", i)
-        scores.append(score)
-        first = i + 1
 
     scores.append(score)
 
+len_loop = 59
+loop_start = 124 - 1
+
+# 103548
 
 print(scores)
+
+idx = (1000000000 % len_loop - 1) + loop_start
+
+print(idx)
+
+print(scores[idx])
+
+print(scores.index(103445))
 
 
 def solve():
@@ -131,16 +139,4 @@ def test():
     assert solve() == 0
 
 
-# too low 100354
-#
-#
-#
-#
-#  also not right
-#
-#  not right
-#  also not right
-#
-#  tried
-#
-#  tried down to 104450 :/
+# 103513
