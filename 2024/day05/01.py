@@ -34,12 +34,12 @@ def get_rules_for_page(p):
 
 valid_updates = []
 for update in updates:
-    valid = True
+    valid = False
     for page in update:
         for rule in get_rules_for_page(page):
             if rule[1] in update:
                 if update.index(rule[0]) > update.index(rule[1]):
-                    valid = False
+                    valid = True
 
 
     if valid:
