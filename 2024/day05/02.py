@@ -67,6 +67,7 @@ def rewrite(invalid_updates):
             for rule in get_rules_for_page(page):
                 if rule[1] in update:
                     if update.index(rule[0]) > update.index(rule[1]):
+                        # IF a rule is violated, swap the offending pages and get back on the merry-go-round again
                         a, b = update.index(rule[0]), update.index(rule[1])
                         update[a], update[b] = update[b], update[a]
 
