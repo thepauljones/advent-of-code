@@ -61,6 +61,7 @@ def get_valid(u):
     return valid_updates
 
 def rewrite(invalid_updates):
+    print("# Broken rules:", len(invalid_updates), "# Solved rules:", len(get_valid(invalid_updates)))
     for update in invalid_updates:
         for page in update:
             for rule in get_rules_for_page(page):
@@ -70,7 +71,6 @@ def rewrite(invalid_updates):
                         update[a], update[b] = update[b], update[a]
 
 
-    print(len(invalid_updates), len(get_valid(invalid_updates)))
     if len(invalid_updates) != len(get_valid(invalid_updates)):
         rewrite(invalid_updates)
 
