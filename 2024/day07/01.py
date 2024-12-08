@@ -1,10 +1,11 @@
 from pathlib import Path
 import re
 import math
+from functools import cache
 from itertools import product
 
 script_location = Path(__file__).absolute().parent
-file_location = script_location / "test-data.dat"
+file_location = script_location / "data.dat"
 file = file_location.open()
 
 data = file.read().splitlines()
@@ -15,6 +16,7 @@ for line in data:
     result, parts = line.split(":")
     items.append((int(result), list(map(int, parts.strip().split(" ")))))
 
+@cache
 def check_sum(value, eq, orig):
     things = eq.split(",")
     if len(things) <= 1:
@@ -30,6 +32,12 @@ def check_sum(value, eq, orig):
 
     if o == "*":
         sum = int(a) * int(b)
+
+        things.insert(0, str(sum))
+        return check_sum(value, ",".join(things), orig)
+
+    if o == "|":
+        sum = a + b
 
         things.insert(0, str(sum))
         return check_sum(value, ",".join(things), orig)
@@ -61,8 +69,9 @@ def test(value, parts, operators):
 
     return check_sum(value, ",".join(eq), ",".join(eq))
 
+@cache
 def get_permutations(n):
-    chars = ['*', '+']
+    chars = ['*', '+', "|"]
     permutations = [''.join(p) for p in product(chars, repeat=n)]
     result = list(set(list(sorted(permutations))))
     return result
