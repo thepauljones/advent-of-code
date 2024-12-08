@@ -2,7 +2,7 @@ from pathlib import Path
 import re
 
 script_location = Path(__file__).absolute().parent
-file_location = script_location / "test-data.dat"
+file_location = script_location / "data.dat"
 file = file_location.open()
 
 data = file.readlines()
@@ -31,19 +31,22 @@ def add_vector(to, vec):
     res = (to[0] + vec[0], to[1] + vec[1])
     return res
 
-def place_antinode(pos):
+antinodes = {}
+def place_antinode(pos, sat, key):
+    global antinodes
     j, i = pos
     if j < 0 or i < 0:
         return
     if j > len(grid) - 1 or i > len(grid[0]) - 1:
         return
 
-    if grid[j][i] == ".":
-        grid[j][i] = "#"
+    if key in antinodes:
+        antinodes[pos] += 1
+    else:
+        antinodes[pos] = 1
 
 for sat in ants.keys():
     matches = ants[sat]
-    print("Processing:", sat)
     for match in matches:
         for cmatch in matches:
             if match == cmatch:
@@ -52,13 +55,11 @@ for sat in ants.keys():
             vec = get_vector(match, cmatch)
             check_pos = add_vector(cmatch, vec)
 
-            place_antinode(check_pos)
+            place_antinode(check_pos, sat, (match, cmatch))
+
 
 count = 0
-for line in grid:
-    print("".join(line))
-    for char in line:
-        if char == "#":
-            count += 1
+for val in antinodes.values():
+    count += val
 
 print(count)
