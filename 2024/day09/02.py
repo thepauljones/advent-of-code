@@ -55,7 +55,7 @@ def bang(smap):
         # if it can't go anywhere forget it 
         if mover_dest == -1:
             continue
-        if mover_dest >= moverpos:
+        if mover_dest > moverpos:
             continue
         #check the leftover
         extra = len(smap[mover_dest]) - len(mover)
