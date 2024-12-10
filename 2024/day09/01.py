@@ -1,5 +1,6 @@
 from pathlib import Path
 from functools import cache
+from itertools import chain
 import re
 
 script_location = Path(__file__).absolute().parent
@@ -8,100 +9,53 @@ file = file_location.open()
 
 data = file.read().strip()
 
-disk = {}
-
+things = []
 for i, ins in enumerate(data):
+    items = []
+    if ins == "0":
+        continue
     if i % 2 == 0:
-        disk[i] = (str(int(i / 2)) * int(ins))
+        while len(items) < int(ins):
+            items.append(str(int(i / 2)))
+        things.append(items)
     else:
-        disk[i] = ("." * int(ins))
+        while len(items) < int(ins):
+            items.append(".")
+        things.append(items)
 
-def has_space(check):
-    return "." in check
-
-def is_empty(check):
-    return check == ""
-
-def has_content(check):
-    if is_empty(check):
-        return False
-    result = list(set(list(check))) != ["."]
-    return result
-
-@cache
-def move(content, empty):
-    c = list(content)
-    e = list(empty)
-
-    for i in range(len(c) - 1, -1, -1):
-        if c[i] != ".":
-            cand = c.pop(i)
-
-            e.insert(empty.index("."), cand)
-            e.pop()
-            c.append(".")
-            break
-
-    return "".join(c), "".join(e)
-
-def defrag(disk):
-    moved = False
-    look_content = len(disk) - 1
-    check_content = disk[look_content]
-    look_empty = 0
-    check_empty = disk[look_empty]
-
-    while moved == False:
-        if has_content(check_content):
-            while moved == False:
-                if not has_space(check_empty):
-                    look_empty += 1
-                    check_empty = disk[look_empty]
-                else:
-                    disk[look_content], disk[look_empty] = move(check_content, check_empty)
-                    moved = True
-        else:
-            look_content -= 1
-            check_content = disk[look_content]
-
-        if look_empty > len(disk):
-            return False
+# flatten 2d array
+output = list(chain.from_iterable(things))
 
 
-    return check_disk_state(disk)
+without = []
+for char in output:
+    if char != ".":
+        without.append(char)
 
-def check_disk_state(disk):
-    res = ""
-    for line in disk.values():
-        res += line
-        print(line, end="")
-    print()
 
-    if list(set(list(res)[res.index("."):])) == ["."]:
-        return True
-    return False
+assert(len(output) - len(without) == output.count("."))
 
-check_disk_state(disk)
+string = []
+for i, char in enumerate(output):
+    if not "." in output[i + 1:]:
+        break
 
-def get_final_state(disk):
-    res = ""
-    for line in disk.values():
-        res += line
+    if char == ".":
+        string.append(without.pop())
+    else:
+        string.append(char)
 
-    return list(map(int, list(res[:res.index(".")])))
+    if len(string) == len(output) - output.count("."):
+        break
 
-res = defrag(disk)
-print(disk)
-while not res:
-    res = defrag(disk)
+assert(len(string) == len(output) - output.count("."))
 
-final_state = get_final_state(disk)
+print(output)
+print(string)
 
-answer = 0
-for i, num in enumerate(final_state):
-    answer += i * num
+ans = 0
+for i, part in enumerate(string):
+    ans += i * int(part)
 
-print(final_state)
-print(answer)
+print(ans)
 
-# 90095094087 too low

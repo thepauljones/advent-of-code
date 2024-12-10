@@ -4,7 +4,7 @@ from itertools import chain
 import re
 
 script_location = Path(__file__).absolute().parent
-file_location = script_location / "test-data.dat"
+file_location = script_location / "data.dat"
 file = file_location.open()
 
 data = file.read().strip()
@@ -45,8 +45,6 @@ def get_first_index_of_space_of_length(l, smap):
 
 
 def bang(smap):
-    inserts = {}
-
     while len(rev) > 0:
         # get the mover
         moverpos, mover = rev.pop(0)
@@ -55,33 +53,31 @@ def bang(smap):
         # if it can't go anywhere forget it 
         if mover_dest == -1:
             continue
-        if mover_dest > moverpos:
+        if mover_dest >= moverpos:
             continue
         #check the leftover
         extra = len(smap[mover_dest]) - len(mover)
 
-        offset = 0
-        for o in inserts:
-            if o <= moverpos:
-                offset += inserts[o]
-        smap[moverpos + offset] = list("."*len(mover))
+        smap[moverpos] = list("."*len(mover))
 
         #move 
         smap[mover_dest] = mover
         # add in the leftovers if required
         if extra > 0:
             dest = mover_dest + 1
-            if dest in inserts:
-                inserts[dest] += 1
-            else:
-                inserts[dest] = 1
             smap.insert(dest, list(extra*"."))
+            for pos, r in enumerate(rev):
+                if r[0] >= mover_dest:
+                    r = (r[0] + 1, r[1])
+                    rev[pos] = r
 
-        print("".join(list(chain.from_iterable(smap))))
+
+
+        # print("".join(list(chain.from_iterable(smap))))
 
     return smap
 
-print("".join(list(chain.from_iterable(things))))
+#print("".join(list(chain.from_iterable(things))))
 res = bang(things)
 
 output = list(chain.from_iterable(res))
