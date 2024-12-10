@@ -45,18 +45,13 @@ def get_first_index_of_space_of_length(l, smap):
 
 
 def bang(smap):
-    count = 0
     inserts = {}
+
     while len(rev) > 0:
-        count += 1
-        print("-----")
-        print(smap)
         # get the mover
         moverpos, mover = rev.pop(0)
         # Where it should go
         mover_dest = get_first_index_of_space_of_length(len(mover), smap)
-        print("MMM", mover, moverpos, mover_dest)
-        print(inserts)
         # if it can't go anywhere forget it 
         if mover_dest == -1:
             continue
@@ -64,10 +59,10 @@ def bang(smap):
             continue
         #check the leftover
         extra = len(smap[mover_dest]) - len(mover)
-        #empty the mover position (NOTE does this actually fuck up what I'm moving??)
+
         offset = 0
         for o in inserts:
-            if o < moverpos:
+            if o <= moverpos:
                 offset += inserts[o]
         smap[moverpos + offset] = list("."*len(mover))
 
@@ -82,9 +77,20 @@ def bang(smap):
                 inserts[dest] = 1
             smap.insert(dest, list(extra*"."))
 
+        print("".join(list(chain.from_iterable(smap))))
 
     return smap
 
+print("".join(list(chain.from_iterable(things))))
 res = bang(things)
-print(res)
 
+output = list(chain.from_iterable(res))
+
+ans = 0
+for i, o in enumerate(output):
+    if o != ".":
+        ans += i * int(o)
+
+print(ans)
+
+# 6223425894430 too low
