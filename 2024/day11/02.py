@@ -1,33 +1,45 @@
 from pathlib import Path
+from functools import lru_cache
 import re
 
 script_location = Path(__file__).absolute().parent
-file_location = script_location / "test-data.dat"
+file_location = script_location / "data.dat"
 file = file_location.open()
 
-data = file.readlines()
+data = str.strip(file.read())
 
-left = []
-right = []
+stones = data.split(" ")
 
+@lru_cache(maxsize=None)
+def process(s):
+    res = []
 
-answer = 0
+    if s == '0':
+        res.append('1')
+    elif len(str(s)) % 2 == 0:
+        res.append(str(int(s[:int(len(s) / 2)])))
+        res.append(str(int(s[int(len(s) / 2):])))
+    else:
+        res.append(str(int(s) * 2024))
 
-for line in data:
-    one, two = map(int, line.split())
-    left.append(one)
-    right.append(two)
-
-
-for item in left:
-    increment = item * right.count(item)
-    answer += increment
-
-
-
-def solve():
-
-    print(answer)
+    return res
 
 
-solve()
+def blink(p):
+    nstones = []
+    for s in p:
+        res = process(s)
+        for r in res:
+            nstones.append(r)
+
+    return nstones
+
+
+count = 0
+y = stones
+while count < 75:
+    y = blink(y)
+    print("Blink: ", count + 1, "length: ", len(y))
+    count += 1
+
+print(len(y))
