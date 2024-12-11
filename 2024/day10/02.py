@@ -17,22 +17,22 @@ def get_next_step_from(val, pos):
     adjs = []
     if j < len(forest) - 1:
         cand = (forest[j + 1][i], (j + 1, i)) # South
-        if cand[0] - val ==1:
+        if cand[0] == val + 1:
             adjs.append(cand)
 
-    if j >= 1:
+    if j > 0:
         cand = (forest[j - 1][i], (j - 1, i))  # North
-        if cand[0] - val ==1:
+        if cand[0] == val + 1:
             adjs.append(cand)
 
-    if i < len(forest[j]) - 1:
+    if i < len(forest[0]) - 1:
         cand = (forest[j][i + 1], (j, i + 1))  # East
-        if cand[0] - val ==1:
+        if cand[0] == val + 1:
             adjs.append(cand)
 
-    if i >= 1:
+    if i > 0:
         cand = (forest[j][i - 1], (j, i - 1))  # West
-        if cand[0] - val ==1:
+        if cand[0] == val + 1:
             adjs.append(cand)
 
     assert len(adjs) < 5
@@ -40,32 +40,34 @@ def get_next_step_from(val, pos):
     return adjs
 
 routes = {}
-paths = []
 def get_trailheads():
     for j in range(len(forest)):
         for i in range(len(forest[0])):
             if forest[j][i] == 0:
-                routes[(j, i)] = (0,(j, i))
+                routes[(j, i)] = [(j, i)]
 
 get_trailheads()
 
-
-total = 0
-def walk_from(point):
-    global total
-    val, pos = point
+def walk(pos):
+    val = forest[pos[0]][pos[1]]
+    if val == 9:
+        return 1
     next_steps = get_next_step_from(val, pos)
-    paths = {}
-    for s in next_steps:
-        print("s", s)
-        if s[0] == 9:
-            total += 1
-        paths[s[1]] = walk_from(s)
 
-    print(paths)
+    unique = 0
+    for n in next_steps:
+        v, p = n
+        unique += walk(p)
 
+    return unique
 
-for k in routes:
-    walk_from(routes[k])
+print(routes)
 
-print(total)
+ans = 0
+print(routes)
+for a in routes:
+    res = walk(a)
+    print(res)
+    ans += res
+
+print(ans)
