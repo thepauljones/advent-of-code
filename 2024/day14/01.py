@@ -1,13 +1,12 @@
 from pathlib import Path
-import re
 
 script_location = Path(__file__).absolute().parent
-file_location = script_location / "test-data.dat"
+file_location = script_location / "data.dat"
 file = file_location.open()
 
 data = file.readlines()
-HEIGHT = 7
-WIDTH = 11
+HEIGHT = 103
+WIDTH = 101
 
 robots = {}
 for i, line in enumerate(data):
@@ -66,7 +65,37 @@ def printRoom():
 
 
 for i in range(100):
-    printRoom()
     shake()
 
+print(robots)
+
+
+def getScore():
+    quadScores = [0, 0, 0, 0]
+    for r in robots.values():
+        print(r)
+        j, i = r
+        if j == (HEIGHT - 1) / 2:
+            continue
+        if i == (WIDTH - 1) / 2:
+            continue
+
+        if j < (HEIGHT / 2) and i < (WIDTH / 2):
+            quadScores[0] += 1
+
+        if j > (HEIGHT / 2) - 1 and i < (WIDTH / 2):
+            quadScores[2] += 1
+
+        if j > (HEIGHT / 2) - 1 and i > (WIDTH / 2) - 1:
+            quadScores[3] += 1
+
+        if j < (HEIGHT / 2) and i > (WIDTH / 2) - 1:
+            quadScores[1] += 1
+
+    print(quadScores)
+
+    return quadScores[0] * quadScores[1] * quadScores[2] * quadScores[3]
+
+
 printRoom()
+print(getScore())
