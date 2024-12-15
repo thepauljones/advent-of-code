@@ -1,7 +1,8 @@
 from pathlib import Path
+from itertools import chain
 
 script_location = Path(__file__).absolute().parent
-file_location = script_location / "data.dat"
+file_location = script_location / "test-data-2.dat"
 file = file_location.open()
 
 data = file.read()
@@ -16,10 +17,6 @@ rawGrid, rawIns = data.split("\n\n")
 
 grid = [list(x) for x in rawGrid.split("\n")]
 
-vex = []
-for line in rawIns.split():
-    vex = vex + list(line)
-
 
 def printGrid():
     for line in grid:
@@ -27,6 +24,33 @@ def printGrid():
 
     print()
     print()
+
+
+printGrid()
+
+
+# output = list(chain.from_iterable(res))
+#
+
+# Sigh - enwiden grid
+for j in range(len(grid)):
+    for i in range(len(grid[0])):
+        if grid[j][i] == "#":
+            grid[j][i] = "##"
+
+        if grid[j][i] == "O":
+            grid[j][i] = "[]"
+
+        if grid[j][i] == ".":
+            grid[j][i] = ".."
+
+        if grid[j][i] == "@":
+            grid[j][i] = "@."
+
+
+vex = []
+for line in rawIns.split():
+    vex = vex + list(line)
 
 
 def getRobotPos():
