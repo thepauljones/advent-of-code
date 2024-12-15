@@ -35,8 +35,6 @@ def getRobotPos():
         if "@" in grid[i]:
             r = (i, grid[i].index("@"))
 
-    print(r, "shit")
-
     return r
 
 
@@ -79,5 +77,3 @@ def getALLGPS():
 
 
 getALLGPS()
-
-# 1406619 -- too low
