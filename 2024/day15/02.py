@@ -15,7 +15,26 @@ dirs["<"] = (0, -1)
 
 rawGrid, rawIns = data.split("\n\n")
 
-grid = [list(x) for x in rawGrid.split("\n")]
+
+def expand(line):
+    res = ""
+    for char in line:
+        if char == "#":
+            res += "##"
+
+        if char == "O":
+            res += "[]"
+
+        if char == ".":
+            res += ".."
+
+        if char == "@":
+            res += "@."
+
+    return list(res)
+
+
+grid = [expand(x) for x in rawGrid.split("\n")]
 
 
 def printGrid():
@@ -30,23 +49,6 @@ printGrid()
 
 
 # output = list(chain.from_iterable(res))
-#
-
-# Sigh - enwiden grid
-for j in range(len(grid)):
-    for i in range(len(grid[0])):
-        if grid[j][i] == "#":
-            grid[j][i] = "##"
-
-        if grid[j][i] == "O":
-            grid[j][i] = "[]"
-
-        if grid[j][i] == ".":
-            grid[j][i] = ".."
-
-        if grid[j][i] == "@":
-            grid[j][i] = "@."
-
 
 vex = []
 for line in rawIns.split():
@@ -56,6 +58,7 @@ for line in rawIns.split():
 def getRobotPos():
     r = (0, 0)
     for i in range(len(grid)):
+        print(grid[i])
         if "@" in grid[i]:
             r = (i, grid[i].index("@"))
 
@@ -68,8 +71,12 @@ def move(pos, dir):
     posContents = grid[pos[0]][pos[1]]
 
     # Out of bounds check not required, grid is walled with #s
-    if grid[next[0]][next[1]] == "O":
+    if grid[next[0]][next[1]] == "[":
         move(next, dir)
+        move((next[0], next[1] + 1), dir)
+    if grid[next[0]][next[1]] == "]":
+        move(next, dir)
+        move((next[0], next[1] - 1), dir)
 
     # Wall
     if grid[next[0]][next[1]] == "#":
@@ -84,6 +91,7 @@ def move(pos, dir):
 for dir in vex:
     print(getRobotPos(), dir)
     move(getRobotPos(), dirs[dir])
+    printGrid()
 
 
 def getGPS(pos):
