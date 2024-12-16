@@ -108,25 +108,12 @@ def getTurns(path):
         for p in path[1:]:
             newDir = dirt[(p[0] - current[0], p[1] - current[1])]
 
-            if dir == ">" and newDir == "<":
-                turns += 1
-
-            if dir == "<" and newDir == ">":
-                turns += 1
-
-            if dir == "^" and newDir == "v":
-                turns += 1
-
-            if dir == "v" and newDir == "^":
-                turns += 1
-
             if dir != newDir:
                 turns += 1
 
             current = p
             dir = newDir
 
-    print(turns, "turns", dir, current)
     return turns * 1000
 
 
