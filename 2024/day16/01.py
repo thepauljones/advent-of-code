@@ -9,7 +9,7 @@ from adjacents import get_adjacent
 
 
 script_location = Path(__file__).absolute().parent
-file_location = script_location / "labyrinth.txt"
+file_location = script_location / "data.dat"
 file = file_location.open()
 
 data = file.readlines()
@@ -29,7 +29,7 @@ dirt = {
     (-1, 0): "^",
 }
 
-all_dirs = [">", "v", ">", "<"]
+all_dirs = [">", "v", "^", "<"]
 
 
 def printWithPath(path):
@@ -44,9 +44,9 @@ def printWithPath(path):
 
 def getPos(contents):
     for j in range(len(grid)):
-        for i in range(len(grid[j])):
+        for i in range(len(grid[0])):
             if grid[j][i] == contents:
-                return j, i
+                return (j, i)
 
 
 def find_path(start, end, field):
@@ -102,14 +102,15 @@ path, cost = find_path(getPos("S"), getPos("E"), grid)
 def getTurns(path):
     turns = 0
     dir = ">"
-    current = getPos("S")
-    print(path[0])
+    current = path[0]
+
     if current is not None:
-        for p in path:
+        for p in path[1:]:
             newDir = dirt[(p[0] - current[0], p[1] - current[1])]
 
             if dir == ">" and newDir == "<":
                 turns += 1
+
             if dir == "<" and newDir == ">":
                 turns += 1
 
@@ -129,12 +130,12 @@ def getTurns(path):
     return turns * 1000
 
 
-printWithPath(path)
-
+print(len(path))
 print("Total score:", len(path) + getTurns(path))
 
 # 41476 too low
 # 107476 too high
+# 107475 too high
 # 106476 too low!!
 #
 # 106477 wrong
