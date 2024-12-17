@@ -1,8 +1,14 @@
 from pathlib import Path
 from adjacents import get_adjacent
 
+# twopaths.txt:                3006         1012 CHECK
+# twoturns.txt:                3004         1005 CHECK
+# threeturns.txt:              3006            7 CHECK
+# labyrinth.txt:             327848        29849 CHECK
+# turnalot.txt:             3285637         8236 CHECK
+
 script_location = Path(__file__).absolute().parent
-file_location = script_location / "test-data.dat"
+file_location = script_location / "data.dat"
 file = file_location.open()
 
 data = file.readlines()
@@ -15,7 +21,14 @@ dirs["v"] = (1, 0)
 dirs[">"] = (0, 1)
 dirs["<"] = (0, -1)
 
-all_dirs = [">", "v", ">", "<"]
+dirt = {
+    (0, 1): ">",
+    (0, -1): "<",
+    (1, 0): "v",
+    (-1, 0): "^",
+}
+
+all_dirs = [">", "v", "^", "<"]
 
 
 def printWithPath(path):
@@ -30,36 +43,40 @@ def printWithPath(path):
 
 def getPos(contents):
     for j in range(len(grid)):
-        for i in range(len(grid[j])):
+        for i in range(len(grid[0])):
             if grid[j][i] == contents:
-                return j, i
+                return (j, i)
 
 
-def find_path(start, end, field):
+def find_paths(start, end, field):
     frontier = []
 
-    frontier.append((0, start))
+    dir = ">"
+    frontier.append((0, dir, start))
     came_from = {}
     cost = {}
-    came_from[start] = None
-    cost[start] = 0
+    came_from[(".", start)] = None
+    cost[(dir, start)] = 0
 
     while len(frontier) > 0:
-        _, current = frontier.pop(0)
+        _, dir, current = frontier.pop(0)
 
         if current == end:
             break
 
-        for next_cost, next_pos in get_adjacent(current[0], current[1], field):
-            print(next_cost, next_pos)
+        for next_cost, next_dir, next_pos in get_adjacent(
+            current[0], current[1], field, dir
+        ):
             j, i = next_pos
             if field[j][i] == "#":
                 continue
-            new_cost = cost[current] + next_cost
-            if next_pos not in cost or new_cost < cost[next_pos]:
-                cost[next_pos] = new_cost
-                came_from[next_pos] = current
-                frontier.append((new_cost, next_pos))
+            new_cost = cost[(dir, current)] + next_cost
+            if (next_dir, next_pos) not in cost or new_cost < cost[
+                (next_dir, next_pos)
+            ]:
+                cost[(next_dir, next_pos)] = new_cost
+                came_from[(next_dir, next_pos)] = (dir, current)
+                frontier.append((new_cost, next_dir, next_pos))
                 frontier.sort()
 
     # traversed grid, now recreate path
@@ -69,20 +86,38 @@ def find_path(start, end, field):
 
     while current != start:
         path.append(current)
-        path_cost += cost[current]
-        current = came_from[current]
+        path_cost += cost[(dir, current)]
+        dir, current = came_from[(dir, current)]
 
-    path.append(start)
+    # path.append(start)
+    path.reverse()
 
     for j, i in path:
         field[j][i] = "0"
 
-    path.reverse()
-    return path
+    return path, path_cost
 
 
-path = find_path(getPos("S"), getPos("E"), grid)
+path, cost = find_paths(getPos("S"), getPos("E"), grid)
+
+
+def getTurns(path):
+    turns = 0
+    dir = ">"
+    current = path[0]
+
+    if current is not None:
+        for p in path[1:]:
+            newDir = dirt[(p[0] - current[0], p[1] - current[1])]
+
+            if dir != newDir:
+                turns += 1
+
+            current = p
+            dir = newDir
+
+    return turns * 1000
+
 
 printWithPath(path)
-
-print(len(path))
+print("Total score:", len(path) + getTurns(path))
