@@ -46,10 +46,3 @@ for i in range(start, len(byte_rain) - 1):
         print("Path not found")
         print(byte_rain[i - 1][::-1])
         exit()
-
-# 2, 48
-# 24, 8
-# 8, 24
-# 61,54
-# 54,61
-# 29,64
