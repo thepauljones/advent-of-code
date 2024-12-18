@@ -31,13 +31,13 @@ def find_path(start, end, field):
 
     while current != start:
         path.append(current)
+        if current not in cost:
+            print("Path not found")
+            return False
         path_cost += cost[current]
         current = came_from[current]
 
     path.append(start)
-
-    for j, i in path:
-        field[j][i] = "0"
 
     # print_grid(field)
     path.reverse()

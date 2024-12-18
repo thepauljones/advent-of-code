@@ -33,9 +33,23 @@ def printGridWithPath(path):
         print()
 
 
-dropBytes(1024)
+start = 1024
+dropBytes(start)
+print(len(byte_rain))
 
-path = find_path((0, 0), (SIZE - 1, SIZE - 1), grid)
+for i in range(start, len(byte_rain) - 1):
+    dropBytes(i)
+    print("Checking", i, byte_rain[i])
+    path = find_path((0, 0), (SIZE - 1, SIZE - 1), grid)
 
-printGridWithPath(path)
-print(len(path) - 1)
+    if not path:
+        print("Path not found")
+        print(byte_rain[i - 1][::-1])
+        exit()
+
+# 2, 48
+# 24, 8
+# 8, 24
+# 61,54
+# 54,61
+# 29,64
