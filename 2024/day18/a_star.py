@@ -1,6 +1,7 @@
 from adjacents import get_adjacent
 
 
+# Returns either the path or False if no path is found
 def find_path(start, end, field):
     frontier = []
 
@@ -32,13 +33,11 @@ def find_path(start, end, field):
     while current != start:
         path.append(current)
         if current not in cost:
-            print("Path not found")
             return False
         path_cost += cost[current]
         current = came_from[current]
 
     path.append(start)
 
-    # print_grid(field)
     path.reverse()
     return path
