@@ -7,8 +7,9 @@ from adjacents import get_adjacent
 # labyrinth.txt:             327848        29849 CHECK
 # turnalot.txt:             3285637         8236 CHECK
 
+
 script_location = Path(__file__).absolute().parent
-file_location = script_location / "data.dat"
+file_location = script_location / "twopaths.txt"
 file = file_location.open()
 
 data = file.readlines()
@@ -51,12 +52,11 @@ def getPos(contents):
 def find_path(start, end, field):
     frontier = []
 
-    dir = ">"
-    frontier.append((0, dir, start))
+    frontier.append((0, ">", start))
     came_from = {}
     cost = {}
-    came_from[(".", start)] = None
-    cost[(dir, start)] = 0
+    came_from[start] = None
+    cost[start] = 0
 
     while len(frontier) > 0:
         _, dir, current = frontier.pop(0)
@@ -70,12 +70,10 @@ def find_path(start, end, field):
             j, i = next_pos
             if field[j][i] == "#":
                 continue
-            new_cost = cost[(dir, current)] + next_cost
-            if (next_dir, next_pos) not in cost or new_cost < cost[
-                (next_dir, next_pos)
-            ]:
-                cost[(next_dir, next_pos)] = new_cost
-                came_from[(next_dir, next_pos)] = (dir, current)
+            new_cost = cost[current] + next_cost
+            if next_pos not in cost or new_cost < cost[next_pos]:
+                cost[next_pos] = new_cost
+                came_from[next_pos] = current
                 frontier.append((new_cost, next_dir, next_pos))
                 frontier.sort()
 
@@ -86,8 +84,8 @@ def find_path(start, end, field):
 
     while current != start:
         path.append(current)
-        path_cost += cost[(dir, current)]
-        dir, current = came_from[(dir, current)]
+        path_cost += cost[current]
+        current = came_from[current]
 
     # path.append(start)
     path.reverse()
@@ -110,13 +108,35 @@ def getTurns(path):
         for p in path[1:]:
             newDir = dirt[(p[0] - current[0], p[1] - current[1])]
 
+            if dir == ">" and newDir == "<":
+                turns += 1
+
+            if dir == "<" and newDir == ">":
+                turns += 1
+
+            if dir == "^" and newDir == "v":
+                turns += 1
+
+            if dir == "v" and newDir == "^":
+                turns += 1
+
             if dir != newDir:
                 turns += 1
 
             current = p
             dir = newDir
 
+    print(turns, "turns", dir, current)
     return turns * 1000
 
 
+print(len(path))
 print("Total score:", len(path) + getTurns(path))
+
+# 41476 too low
+# 107476 too high
+# 107475 too high
+# 106476 too low!!
+#
+# 106477 wrong
+# 106478 also wrong
