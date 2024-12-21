@@ -29,8 +29,6 @@ def test_design(design):
 
 ans = 0
 for d in designs:
-    print(d, test_design(d))
-    if test_design(d):
-        ans += 1
+    ans += test_design(d)
 
 print(ans)
