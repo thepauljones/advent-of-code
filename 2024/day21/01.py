@@ -1,47 +1,164 @@
 from pathlib import Path
-from a_star import find_path
 
 script_location = Path(__file__).absolute().parent
-file_location = script_location / "test-data.dat"
+file_location = script_location / "data.dat"
 file = file_location.open()
 
-tel = [["7", "8", "9"], ["4", "5", "6"], ["1", "2", "3"], ["#", "0", "A"]]
+data = file.readlines()
 
-dir = [["#", "^", "A"], ["<", "v", ">"]]
+tel_paths = {
+    "7": {
+        "7": "A",
+        "8": ">A",
+        "9": ">>A",
+        "4": "vA",
+        "5": "v>A",
+        "6": "v>>A",
+        "1": "vvA",
+        "2": "vv>A",
+        "3": "vv>>A",
+        "0": "vvv>A",
+        "A": "vvv>>A",
+    },
+    "8": {
+        "7": "<A",
+        "8": "A",
+        "9": ">A",
+        "4": "<vA",
+        "5": "vA",
+        "6": "v>A",
+        "1": "<vvA",
+        "2": "vvA",
+        "3": "vv>A",
+        "0": "vvvA",
+        "A": "vvv>A",
+    },
+    "9": {
+        "7": "<<A",
+        "8": "<A",
+        "9": "A",
+        "4": "<<vA",
+        "5": "<vA",
+        "6": "vA",
+        "1": "<<vvA",
+        "2": "<vvA",
+        "3": "vvA",
+        "0": "<vvvA",
+        "A": "vvvA",
+    },
+    "4": {
+        "7": "^A",
+        "8": ">^A",
+        "9": ">>^A",
+        "4": "A",
+        "5": ">A",
+        "6": ">>A",
+        "1": "vA",
+        "2 ": "v>A",
+        "3": "v>>A",
+        "0": "vv>A",
+        "A": "vv>>A",
+    },
+    "5": {
+        "7": "<^A",
+        "8": "^A",
+        "9": ">^A",
+        "4": "<A",
+        "5": "A",
+        "6": ">A",
+        "1": "<vA",
+        "2": "vA",
+        "3": "v>A",
+        "0": "vvA",
+        "A": "vv>A",
+    },
+    "6": {
+        "7": "<<^A",
+        "8": "<^A",
+        "9": "^A",
+        "4": "<<A",
+        "5": "<A",
+        "6": "A ",
+        "1": "<<vA",
+        "2": "<vA",
+        "3": "vA",
+        "0": "<vvA",
+        "A": "vvA",
+    },
+    "1": {
+        "7": "^^A",
+        "8": ">^^A",
+        "9": ">>^^A",
+        "4": "^A",
+        "5": ">^A",
+        "6": ">>^A",
+        "1": "A",
+        "2": ">A",
+        "3": ">>A",
+        "0": "v>A",
+        "A": "v>>A",
+    },
+    "2": {
+        "7": "<^^A",
+        "8": "^^A",
+        "9": ">^^A",
+        "4": "<^ A",
+        "5": "^A",
+        "6": ">^A",
+        "1": "<A",
+        "2": "A",
+        "3": ">A",
+        "0": "vA",
+        "A": "v>A",
+    },
+    "3": {
+        "7": "<<^^A",
+        "8": "<^^A",
+        "9": "^^A",
+        "4": "<<^A",
+        "5": "<^A",
+        "6": "^A",
+        "1": "<<A",
+        "2": "<A",
+        "3": "A",
+        "0": "<vA",
+        "A": "vA",
+    },
+    "0": {
+        "7": "<^^^A",
+        "8": "^^^A",
+        "9": "^^^>A",
+        "4": "<^^A",
+        "5": "^^A",
+        "6": "^^>A",
+        "1": "^<A",
+        "2": "^A",
+        "3": ">^A",
+        "0": "A",
+        "A": ">A",
+    },
+    "A": {
+        "7": "^^^<<A",  # done
+        "8": "<^^^A",
+        "9": "^^^A",
+        "4": "^^<<A",  # done
+        "5": "<^^A",
+        "6": "^^A",
+        "1": "^<<A",  # done
+        "2": "<^A",
+        "3": "^A",
+        "0": "<A",
+        "A": "A",
+    },
+}
 
-tel_paths = {}
-dir_paths = {}
-
-
-def get_all_paths(grid, pos):
-    res = {}
-    for j in range(len(grid)):
-        for i in range(len(grid[0])):
-            if grid[j][i] == "#" or grid[pos[0]][pos[1]] == "#":
-                continue
-            elif pos == (j, i):
-                res[grid[j][i]] = "A"
-            else:
-                res[grid[j][i]] = find_path((j, i), pos, grid)
-
-    return res
-
-
-# Build a dict of dicts, of all paths from each button to the other
-for j in range(len(tel)):
-    for i in range(len(tel[0])):
-        if tel[j][i] == "#":
-            continue
-        res = get_all_paths(tel, (j, i))
-        tel_paths[tel[j][i]] = res
-
-# Build a dict of dicts, of all paths from each button to the other
-for j in range(len(dir)):
-    for i in range(len(dir[0])):
-        if dir[j][i] == "#":
-            continue
-        res = get_all_paths(dir, (j, i))
-        dir_paths[dir[j][i]] = res
+dir_paths = {
+    "^": {"^": "A", "A": ">A", "<": "v<A", "v": "vA", ">": "v>A"},  # done
+    "<": {"^": ">^A", "A": ">>^A", "<": "A", "v": ">A", ">": ">>A"},  # done
+    "v": {"^": "^A", "A": "^>A", "<": "<A", "v": "A", ">": ">A"},
+    ">": {"^": "<^A", "A": "^A", "<": "<<A", "v": "<A", ">": "A"},
+    "A": {"^": "<A", "A": "A", "<": "<<vA", "v": "<vA", ">": "vA"},
+}
 
 
 def get_buttons(f, t):
@@ -70,14 +187,9 @@ def get_dir_buttons_for_code(code, start="A"):
     return res
 
 
-print(tel_paths)
-
-
 def get_robot2_for_code(code):
     dirs = get_buttons_for_code(code)
-
     robot1 = get_dir_buttons_for_code(dirs)
-
     robot2 = get_dir_buttons_for_code(robot1)
 
     print(robot2)
@@ -85,18 +197,11 @@ def get_robot2_for_code(code):
     print(dirs)
     print(code)
 
-    print(len(robot2))
+    print((len(robot2)), "*", int(code[:-1]))
     return int(code[:-1]) * (len(robot2))
 
 
-print(
-    sum(
-        [
-            get_robot2_for_code("029A"),
-            get_robot2_for_code("980A"),
-            get_robot2_for_code("179A"),
-            get_robot2_for_code("456A"),
-            get_robot2_for_code("379A"),
-        ]
-    )
-)
+ans = 0
+for code in data:
+    ans += get_robot2_for_code(code.strip())
+print(ans)
