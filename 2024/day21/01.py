@@ -17,8 +17,10 @@ def get_all_paths(grid, pos):
     res = {}
     for j in range(len(grid)):
         for i in range(len(grid[0])):
-            if grid[j][i] == "#" or pos == (j, i) or grid[pos[0]][pos[1]] == "#":
+            if grid[j][i] == "#" or grid[pos[0]][pos[1]] == "#":
                 continue
+            elif pos == (j, i):
+                res[grid[j][i]] = "A"
             else:
                 res[grid[j][i]] = find_path((j, i), pos, grid)
 
@@ -53,4 +55,26 @@ def get_buttons_for_code(code):
     return res
 
 
-print(get_buttons_for_code("029A"))
+def get_dir_buttons(f, t):
+    return dir_paths[f][t]
+
+
+def get_dir_buttons_for_code(code):
+    test = "A" + code  # start above A
+    res = ""
+    for i in range(len(test) - 1):
+        res += get_dir_buttons(test[i], test[i + 1])
+
+    return res
+
+
+code = "029A"
+print(code)
+dirs = get_buttons_for_code(code)
+print(dirs)
+
+twee = get_dir_buttons_for_code(dirs)
+print(twee)
+
+drie = get_dir_buttons_for_code(twee)
+print(drie)
