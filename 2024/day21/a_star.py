@@ -29,7 +29,10 @@ def find_path(start, end, field):
             current[1],
             field,
         ):
+            assert field[next_pos[0]][next_pos[1]] != "#"
             new_cost = cost[current] + next_cost
+            if field[next_pos[0]][next_pos[1]] == "#":
+                continue
             if next_pos not in cost or new_cost < cost[next_pos]:
                 cost[next_pos] = new_cost
                 came_from[next_pos] = current
@@ -55,6 +58,5 @@ def find_path(start, end, field):
     for i in range(1, len(path)):
         moves.append(dirs[(path[i][0] - path[i - 1][0], path[i][1] - path[i - 1][1])])
 
-    moves.append("A")
-
-    return "".join(moves)
+    result = "".join(sorted(moves))
+    return result + "A"
