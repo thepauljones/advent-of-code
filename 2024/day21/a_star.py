@@ -1,5 +1,12 @@
 from adjacents import get_adjacent
 
+dirs = {
+    (0, -1): ">",
+    (0, 1): "<",
+    (-1, 0): "v",
+    (1, 0): "^",
+}
+
 
 def find_path(start, end, field):
     frontier = []
@@ -46,6 +53,8 @@ def find_path(start, end, field):
 
     moves = []
     for i in range(1, len(path)):
-        moves.append((path[i][0] - path[i - 1][0], path[i][1] - path[i - 1][1]))
+        moves.append(dirs[(path[i][0] - path[i - 1][0], path[i][1] - path[i - 1][1])])
 
-    return moves
+    moves.append("A")
+
+    return "".join(moves)
