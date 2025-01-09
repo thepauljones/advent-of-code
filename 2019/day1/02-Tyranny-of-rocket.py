@@ -2,12 +2,14 @@ from pathlib import Path
 import math
 
 script_location = Path(__file__).absolute().parent
-file_location = script_location / 'data.dat'
+file_location = script_location / "test-data.dat"
 file = file_location.open()
+
 
 def calculate(mass):
     result = math.floor(mass / 3 - 2)
     return result
+
 
 masses = [int(x) for x in file.readlines()]
 
