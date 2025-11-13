@@ -16,9 +16,7 @@ main :: () {
   count := 0;
 
   for bits {
-    if it.count < 1 {
-        break;
-    }
+    print("Answer is %  \n", count);
     is_plus := starts_with(it, "+");
 
     value := string_to_int(slice(it, 1, it.count));
@@ -31,4 +29,6 @@ main :: () {
 
     print("Answer is %  \n", count);
   }
+
+  print("Ended: %\n", count);
 }
