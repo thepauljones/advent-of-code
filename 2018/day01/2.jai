@@ -23,7 +23,6 @@ main :: () {
   is_plus := true;
   value := 0;
 
-  loopCount := 1;
   while loop {
     it = nums[i];
 
@@ -43,9 +42,6 @@ main :: () {
       i = 0;
     }
 
-    loopCount += 1;
-
     table_add(*table, count, true);
   }
-  exit(1);
 }
