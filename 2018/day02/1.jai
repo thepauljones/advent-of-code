@@ -7,7 +7,6 @@ main :: () {
     file := read_entire_file("input.dat");
     lines := split(file, "\n");
 
-
     threes := 0;
     twos := 0;
     found_two := false;
