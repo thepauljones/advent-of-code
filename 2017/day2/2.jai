@@ -1,36 +1,36 @@
 #import "Basic";
 #import "String";
 #import "File";
+#import "Math";
 
 main :: () {
   file := read_entire_file("input.dat");
+  lines := split(file, "\n");
 
   answer := 0;
-  num := 0;
-  next := 0;
-  value := "";
-  looped_index := 0;
+  for lines {
+    max := 0;
+    min := 99999999999999;
+    num := 0;
 
-  print("\n");
-  print("%\n", file);
+    diff := 0;
 
-  for 0..file.count - 1 {
-    num = string_to_int(slice(file, it, 1));
+    cells := split(it, "\t");
+    for cell:cells {
 
-    // (file.count - 1) this was the part I was missing, it's fine to 
-    // add half the total list, but you have to mod by the actual length, file.count -1
-    looped_index = (it + file.count / 2) % (file.count - 1);
-    value = slice(file, looped_index, 1);
+      num = string_to_int(cell);
 
-    print("looped_index:%, \n", looped_index, value);
+      if num > max {
+        max = num;
+      }
 
-    next = string_to_int(value);
-    if num == next {
-      print("Match %\n", num);
-      answer += num;
+      if num < min {
+        min = num;
+      }
+
     }
 
+    answer += abs(max - min);
   }
-
-  print("Answer %\n", answer);
+  print("Answer: %\n", answer);
 }
