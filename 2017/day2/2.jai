@@ -9,28 +9,47 @@ main :: () {
 
   answer := 0;
   for lines {
-    max := 0;
-    min := 99999999999999;
     num := 0;
+    num2 := 0;
 
-    diff := 0;
+    division := 0;
 
     cells := split(it, "\t");
-    for cell:cells {
-
+    for cell, i:cells {
       num = string_to_int(cell);
+      for cell2, j: cells {
+        if i == j continue;
 
-      if num > max {
-        max = num;
+        num2 = string_to_int(cell2);
+
+        if num > num2 {
+          if num % num2 == 0 {
+              break cell2;
+              answer += num / num2;
+          }
+        } else {
+          if num2 % num == 0 {
+              answer += num2 / num;
+              break cell2;
+          }
+        }
       }
-
-      if num < min {
-        min = num;
-      }
-
     }
-
-    answer += abs(max - min);
   }
   print("Answer: %\n", answer);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
