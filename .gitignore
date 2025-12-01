@@ -1,5 +1,8 @@
 __pycache__
 *data.dat
+*input.dat
+*test.dat
+*test.dat
 *test-data
 **/.build/**
 **/*.dSYM/**
