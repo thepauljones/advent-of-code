@@ -18,7 +18,7 @@ main :: () {
 
     count := required_digits;
     while count > 0 {
-      val, index, new_array := array_max(l, count, it_index == 2);
+      val, index, new_array := array_max(l, count);
       l = new_array;
       array_add(*res, val);
       count -= 1;
@@ -31,7 +31,7 @@ main :: () {
   print("%\n", answer);
 }
 
-array_max :: (a:[]u8, digits:u8) -> u8, int, []u8 {
+array_max :: (a:[]u8, digits:u8, debug: bool = false) -> u8, int, []u8 {
     m :u8 = 0;
     index := 0;
     b := array_slice(a, a.count - digits);
